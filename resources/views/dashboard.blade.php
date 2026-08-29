@@ -14,36 +14,36 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
             <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100">
+                <a href="{{ route('hrd.employees.index') }}">
+
                 <div class="flex justify-between items-start mb-4">
                     <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                         <i class="ph-fill ph-user text-xl"></i>
                     </div>
-                    <span class="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                        +12%
-                    </span>
                 </div>
                 <div>
                     <p class="text-sm text-slate-500 font-medium mb-1">Total Karyawan</p>
                     <h3 class="text-3xl font-bold text-slate-800">{{ $employees ?? 0 }}</h3>
                 </div>
+                </a>
+
             </div>
 
             <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100">
+                <a href="{{ route('hrd.participants.index') }}">
                 <div class="flex justify-between items-start mb-4">
                     <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
                         <i class="ph-fill ph-chalkboard-teacher text-xl"></i>
                     </div>
-                    <span class="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                        +5.4%
-                    </span>
                 </div>
                 <div>
                     <p class="text-sm text-slate-500 font-medium mb-1">Karyawan Pelatihan</p>
                     <h3 class="text-3xl font-bold text-slate-800">{{ $trainedEmployees ?? 0 }}</h3>
                 </div>
+                </a>
             </div>
 
-            <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100">
+            {{-- <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div class="flex justify-between items-start mb-4">
                     <div class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-500">
                         <i class="ph-fill ph-timer text-xl"></i>
@@ -56,7 +56,7 @@
                     <p class="text-sm text-slate-500 font-medium mb-1">Total Jam Pelatihan</p>
                     <h3 class="text-3xl font-bold text-slate-800">1.250</h3>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div class="flex justify-between items-start mb-4">
@@ -82,7 +82,7 @@
                 <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[400px]">
                     <div class="flex justify-between items-center mb-6">
                         <div>
-                            <h3 class="text-lg font-bold text-slate-800">Partisipasi Per Departemen</h3>
+                            {{-- <h3 class="text-lg font-bold text-slate-800">Partisipasi Per Departemen</h3> --}}
                             <p class="text-sm text-slate-500">Statistik keikutsertaan pelatihan 2024</p>
                         </div>
                         <div class="flex bg-slate-100 p-1 rounded-lg">

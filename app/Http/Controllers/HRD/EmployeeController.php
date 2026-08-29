@@ -10,44 +10,92 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    // public function index()
+    // public function index(Request $request)
     // {
-    //     // Mengambil semua data karyawan beserta nama departemennya
-    //     $employees = Employee::with('department')->paginate(10); // Menggunakan pagination untuk menampilkan 10 data per halaman
+    //     $search = $request->search;
 
-    //     return view('hrd.employees.index', compact('employees'));
+    //     // Data karyawan + pencarian
+    //     $employees = Employee::with('department')
+    //         ->when($search, function ($query) use ($search) {
+    //             $query->where(function ($q) use ($search) {
+    //                 $q->where('nama', 'like', "%{$search}%")
+    //                     ->orWhere('nik', 'like', "%{$search}%");
+    //             });
+    //         })
+    //         ->paginate(10)
+    //         ->withQueryString();
+
+    //     // Statistik training
+    //     $today = now()->toDateString();
+
+    //     $completedTrainings = Training::where('tanggal_selesai', '<', $today)->count();
+
+    //     $onProgressTrainings = Training::where('tanggal_mulai', '<=', $today)
+    //         ->where('tanggal_selesai', '>=', $today)
+    //         ->count();
+
+    //     $pendingTrainings = Training::where(function ($query) use ($today) {
+    //         $query->where('tanggal_mulai', '>', $today)
+    //             ->orWhereNull('tanggal_mulai');
+    //     })
+    //         ->count();
+
+    //     return view('hrd.employees.index', compact(
+    //         'employees',
+    //         'completedTrainings',
+    //         'onProgressTrainings',
+    //         'pendingTrainings'
+    //     ));
     // }
 
-    public function index()
-    {
-        // 1. Mengambil data karyawan dengan pagination
-        $employees = Employee::with('department')->paginate(10);
+    public function index(Request $request)
+{
+    $search = $request->search;
+    $departmentId = $request->department_id;
 
-        // 2. Menghitung data statistik pelatihan berdasarkan tanggal
-        $today = now()->toDateString();
+    $departments = Department::withCount('employees')
+        ->orderBy('nama_departemen')
+        ->get();
 
-        $completedTrainings = Training::where('tanggal_selesai', '<', $today)->count();
+    $employees = Employee::with('department')
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nik', 'like', "%{$search}%");
+            });
+        })
+        ->when($departmentId, function ($query) use ($departmentId) {
+            $query->where('department_id', $departmentId);
+        })
+        ->paginate(10)
+        ->withQueryString();
 
-        $onProgressTrainings = Training::where('tanggal_mulai', '<=', $today)
-                                      ->where('tanggal_selesai', '>=', $today)
-                                      ->count();
+    $today = now()->toDateString();
 
-        $pendingTrainings = Training::where('tanggal_mulai', '>', $today)
-                                    ->orWhereNull('tanggal_mulai')
-                                    ->count();
+    $completedTrainings = Training::where('tanggal_selesai', '<', $today)->count();
 
-        // 3. Mengirimkan semua data ke view
-        return view('hrd.employees.index', compact(
-            'employees',
-            'completedTrainings',
-            'onProgressTrainings',
-            'pendingTrainings'
-        ));
-    }
+    $onProgressTrainings = Training::where('tanggal_mulai', '<=', $today)
+        ->where('tanggal_selesai', '>=', $today)
+        ->count();
+
+    $pendingTrainings = Training::where(function ($query) use ($today) {
+        $query->where('tanggal_mulai', '>', $today)
+            ->orWhereNull('tanggal_mulai');
+    })->count();
+
+    return view('hrd.employees.index', compact(
+        'employees',
+        'departments',
+        'completedTrainings',
+        'onProgressTrainings',
+        'pendingTrainings'
+    ));
+}
 
     public function create()
     {
         $departments = Department::all();
+
         return view('hrd.employees.create', compact('departments'));
     }
 
@@ -71,17 +119,34 @@ class EmployeeController extends Controller
         return redirect()->route('hrd.employees.index')->with('success', 'Data karyawan berhasil ditambahkan!');
     }
 
-    public function edit(Employee $employee)
+    // public function show(Employee $employee)
+    // {
+    //     return view('hrd.employees.show', compact('employee'));
+    // }
+    // public function edit(Employee $employee)
+    // {
+    //     $departments = Department::all();
+
+    //     return view('hrd.employees.edit', compact('employee', 'departments'));
+    // }
+
+    public function show(Employee $employee)
     {
-        $departments = Department::all();
-        return view('hrd.employees.edit', compact('employee', 'departments'));
+        $employee->load([
+            'department',
+            'trainings' => function ($query) {
+                $query->latest();
+            },
+        ]);
+
+        return view('hrd.employees.show', compact('employee'));
     }
 
     public function update(Request $request, Employee $employee)
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'nik' => 'required|string|unique:employees,nik,' . $employee->id,
+            'nik' => 'required|string|unique:employees,nik,'.$employee->id,
             'department_id' => 'required|exists:departments,id',
             'jabatan' => 'nullable|string|max:255',
             'status_karyawan' => 'required|in:tetap,kontrak',
@@ -98,6 +163,24 @@ class EmployeeController extends Controller
     public function destroy(Employee $employee)
     {
         $employee->delete();
+
         return redirect()->route('hrd.employees.index')->with('success', 'Data karyawan berhasil dihapus!');
     }
+
+    // public function search(Request $request)
+    // {
+    //     $search = $request->search;
+
+    //     $employees = Employee::with('department')
+    //         ->when($search, function ($q) use ($search) {
+    //             $q->where(function ($query) use ($search) {
+    //                 $query->where('nama', 'like', "%{$search}%")
+    //                       ->orWhere('nik', 'like', "%{$search}%");
+    //             });
+    //         })
+    //         ->paginate(10)
+    //         ->withQueryString();
+
+    //     return view('hrd.employees.index', compact('employees'));
+    // }
 }

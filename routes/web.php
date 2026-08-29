@@ -67,6 +67,8 @@ Route::middleware(['auth', 'role:hrd'])->group(function () {
     Route::get('/hrd/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('hrd.employees.edit');
     Route::put('/hrd/employees/{employee}', [EmployeeController::class, 'update'])->name('hrd.employees.update');
     Route::delete('/hrd/employees/{employee}', [EmployeeController::class, 'destroy'])->name('hrd.employees.destroy');
+    Route::get('/hrd/employees/{employee}/show', [EmployeeController::class, 'show'])->name('hrd.employees.show'); // Rute untuk menampilkan detail karyawan
+    // Route::get('hrd.employees.search', [EmployeeController::class, 'search'])->name('hrd.employees.search');
 
     // Rute Master Pelatihan
     Route::get('/hrd/trainings', [TrainingController::class, 'index'])->name('hrd.trainings.index');
