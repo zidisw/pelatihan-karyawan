@@ -30,4 +30,10 @@ class Employee extends Model
     {
         return $this->hasMany(Certification::class);
     }
+
+    public function trainings()
+    {
+        return $this->belongsToMany(Training::class, 'training_participants', 'employee_id', 'training_id')
+            ->withPivot('id', 'status_peserta', 'created_at', 'updated_at');
+    }
 }

@@ -33,10 +33,10 @@
                                 <div class="text-[10px] text-slate-400">{{ $req->created_at->format('H:i') }}</div>
                             </td>
                             <td class="py-5 px-4">
-                                <div class="font-bold text-slate-800">{{ $req->employee->nama }}</div>
-                                <div class="text-[11px] text-slate-400 uppercase tracking-wide">NIK: {{ $req->employee->nik }}</div>
+                                <div class="font-bold text-slate-800">{{ $req->employee?->nama ?? 'Karyawan Dihapus' }}</div>
+                                <div class="text-[11px] text-slate-400 uppercase tracking-wide">NIK: {{ $req->employee?->nik ?? '-' }}</div>
                             </td>
-                            <td class="py-5 px-4 font-medium text-slate-700">{{ $req->training->nama_pelatihan }}</td>
+                            <td class="py-5 px-4 font-medium text-slate-700">{{ $req->training?->nama_pelatihan ?? 'Pelatihan Dihapus' }}</td>
                             <td class="py-5 px-4 text-center">
                                 @php
                                     $statusClasses = [

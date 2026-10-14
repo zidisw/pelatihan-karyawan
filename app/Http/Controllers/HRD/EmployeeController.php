@@ -95,6 +95,35 @@ class EmployeeController extends Controller
         return redirect()->route('hrd.employees.index')->with('success', 'Data karyawan berhasil diperbarui!');
     }
 
+    public function show(Employee $employee)
+    {
+        $employee->load([
+            'department',
+            'trainings',
+            'trainingRequests.training',
+            'trainingRequests.diajukanOleh',
+            'certifications',
+        ]);
+
+        // Hitung ringkasan statistik pelatihan untuk karyawan ini
+        $totalTrainings = $employee->trainings->count();
+        $completedTrainings = $employee->trainings->where('pivot.status_peserta', 'selesai')->count();
+        $inProgressTrainings = $employee->trainings->where('pivot.status_peserta', 'sedang_pelatihan')->count();
+        $pendingRequests = $employee->trainingRequests->where('status', 'pending')->count();
+
+        // Pelatihan yang sedang dibuka jika ingin mendaftarkan langsung
+        $availableTrainings = Training::where('status_pendaftaran', 'dibuka')->get();
+
+        return view('hrd.employees.show', compact(
+            'employee',
+            'totalTrainings',
+            'completedTrainings',
+            'inProgressTrainings',
+            'pendingRequests',
+            'availableTrainings'
+        ));
+    }
+
     public function destroy(Employee $employee)
     {
         $employee->delete();

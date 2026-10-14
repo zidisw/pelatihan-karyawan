@@ -96,7 +96,9 @@
                                             {{ $initials }}
                                         </div>
                                         <div>
-                                            <p class="text-sm font-bold text-slate-800">{{ $employee->nama }}</p>
+                                            <a href="{{ route('hrd.employees.show', $employee->id) }}" class="text-sm font-bold text-slate-800 hover:text-primary-600 transition-colors">
+                                                {{ $employee->nama }}
+                                            </a>
                                             <p class="text-[11px] text-slate-400 mt-0.5">NIK: {{ $employee->nik }}</p>
                                         </div>
                                     </div>
@@ -110,15 +112,19 @@
                                     <span class="text-xs font-medium text-slate-500">{{ $employee->jabatan ?? '-' }}</span>
                                 </td>
                                 <td class="py-4 px-4">
-                                    @if($employee->status_karyawan == 'TETAP')
-                                        <span class="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-600 text-[10px] font-bold border border-emerald-100 uppercase">{{ $employee->status_karyawan }}</span>
-                                    @elseif($employee->status_karyawan == 'KONTRAK')
-                                        <span class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 text-[10px] font-bold border border-blue-100 uppercase">{{ $employee->status_karyawan }}</span>
-                                    @else
-                                        <span class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold border border-slate-200 uppercase">{{ $employee->status_karyawan ?? 'MAGANG' }}</span>
-                                    @endif
+                                    @php
+                                        $statusClass = match(strtolower($employee->status_karyawan)) {
+                                            'tetap' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                            'kontrak' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                            default => 'bg-slate-100 text-slate-600 border-slate-200',
+                                        };
+                                    @endphp
+                                    <span class="px-2.5 py-1 rounded-md text-[10px] font-bold border uppercase {{ $statusClass }}">
+                                        {{ $employee->status_karyawan }}
+                                    </span>
                                 </td>
-                                <td class="py-4 px-4 text-right space-x-2">
+                                <td class="py-4 px-4 text-right space-x-1.5">
+                                    <a href="{{ route('hrd.employees.show', $employee->id) }}" class="inline-block text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 px-3 py-1.5 rounded-lg transition-colors">Detail</a>
                                     <a href="{{ route('hrd.employees.edit', $employee->id) }}" class="inline-block text-xs font-bold text-amber-500 hover:text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg transition-colors">Edit</a>
 
                                     <form action="{{ route('hrd.employees.destroy', $employee->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus karyawan ini?');">

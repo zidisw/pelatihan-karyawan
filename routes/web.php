@@ -61,6 +61,7 @@ Route::middleware(['auth', 'role:hrd'])->group(function () {
     Route::get('/hrd/employees', [EmployeeController::class, 'index'])->name('hrd.employees.index');
     Route::get('/hrd/employees/create', [EmployeeController::class, 'create'])->name('hrd.employees.create');
     Route::post('/hrd/employees', [EmployeeController::class, 'store'])->name('hrd.employees.store');
+    Route::get('/hrd/employees/{employee}', [EmployeeController::class, 'show'])->name('hrd.employees.show');
     Route::get('/hrd/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('hrd.employees.edit');
     Route::put('/hrd/employees/{employee}', [EmployeeController::class, 'update'])->name('hrd.employees.update');
     Route::delete('/hrd/employees/{employee}', [EmployeeController::class, 'destroy'])->name('hrd.employees.destroy');

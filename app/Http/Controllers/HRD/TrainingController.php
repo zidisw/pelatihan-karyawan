@@ -47,8 +47,12 @@ class TrainingController extends Controller
 
     public function show(Training $training)
     {
-        // Memuat data pelatihan beserta karyawan yang terdaftar
-        $training->load('employees');
+        // Memuat data pelatihan beserta karyawan yang terdaftar dan riwayat request
+        $training->load([
+            'employees.department',
+            'requests.employee.department',
+            'requests.diajukanOleh',
+        ]);
 
         return view('hrd.trainings.show', compact('training'));
     }
