@@ -16,17 +16,7 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    @if (auth()->check() && auth()->user()->role == 'superadmin')
-                        <x-nav-link :href="route('superadmin.departments.index')" :active="request()->routeIs('superadmin.departments.*')">
-                            Master Departemen
-                        </x-nav-link>
-
-                        <x-nav-link :href="route('superadmin.users.index')" :active="request()->routeIs('superadmin.users.*')">
-                            Manajemen Akun
-                        </x-nav-link>
-                    @endif
-
-                    @if (auth()->check() && auth()->user()->role == 'hrd')
+                    @if (auth()->check() && in_array(auth()->user()->role, ['superadmin', 'hrd']))
                         <x-nav-link :href="route('hrd.employees.index')" :active="request()->routeIs('hrd.employees.*')">
                             Master Karyawan
                         </x-nav-link>
@@ -42,7 +32,19 @@
                         <x-nav-link :href="route('hrd.participants.index')" :active="request()->routeIs('hrd.participants.*')">
                             Manajemen Peserta
                         </x-nav-link>
+                    @endif
 
+                    @if (auth()->check() && auth()->user()->role == 'superadmin')
+                        <x-nav-link :href="route('superadmin.departments.index')" :active="request()->routeIs('superadmin.departments.*')">
+                            Master Departemen
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('superadmin.users.index')" :active="request()->routeIs('superadmin.users.*')">
+                            Manajemen Akun
+                        </x-nav-link>
+                    @endif
+
+                    @if (auth()->check() && auth()->user()->role == 'hrd')
                         <x-nav-link :href="route('hrd.departments.index')" :active="request()->routeIs('hrd.departments.*')">
                             Master Departemen
                         </x-nav-link>
@@ -111,16 +113,7 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            @if (auth()->check() && auth()->user()->role == 'superadmin')
-                <x-responsive-nav-link :href="route('superadmin.departments.index')" :active="request()->routeIs('superadmin.departments.*')">
-                    Master Departemen
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('superadmin.users.index')" :active="request()->routeIs('superadmin.users.*')">
-                    Manajemen Akun
-                </x-responsive-nav-link>
-            @endif
-
-            @if (auth()->check() && auth()->user()->role == 'hrd')
+            @if (auth()->check() && in_array(auth()->user()->role, ['superadmin', 'hrd']))
                 <x-responsive-nav-link :href="route('hrd.employees.index')" :active="request()->routeIs('hrd.employees.*')">
                     Master Karyawan
                 </x-responsive-nav-link>
@@ -133,6 +126,18 @@
                 <x-responsive-nav-link :href="route('hrd.participants.index')" :active="request()->routeIs('hrd.participants.*')">
                     Manajemen Peserta
                 </x-responsive-nav-link>
+            @endif
+
+            @if (auth()->check() && auth()->user()->role == 'superadmin')
+                <x-responsive-nav-link :href="route('superadmin.departments.index')" :active="request()->routeIs('superadmin.departments.*')">
+                    Master Departemen
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('superadmin.users.index')" :active="request()->routeIs('superadmin.users.*')">
+                    Manajemen Akun
+                </x-responsive-nav-link>
+            @endif
+
+            @if (auth()->check() && auth()->user()->role == 'hrd')
                 <x-responsive-nav-link :href="route('hrd.departments.index')" :active="request()->routeIs('hrd.departments.*')">
                     Master Departemen
                 </x-responsive-nav-link>

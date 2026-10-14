@@ -76,20 +76,8 @@
                 <span>Dashboard</span>
             </a>
 
-            <!-- MENU SUPERADMIN -->
-            @if(auth()->check() && auth()->user()->role == 'superadmin')
-                <a href="{{ route('superadmin.departments.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('superadmin.departments.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
-                    @if(request()->routeIs('superadmin.departments.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
-                    <i class="ph-fill ph-buildings text-xl"></i><span>Master Departemen</span>
-                </a>
-                <a href="{{ route('superadmin.users.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('superadmin.users.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
-                    @if(request()->routeIs('superadmin.users.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
-                    <i class="ph-fill ph-users-three text-xl"></i><span>Manajemen Akun</span>
-                </a>
-            @endif
-
-            <!-- MENU HRD -->
-            @if(auth()->check() && auth()->user()->role == 'hrd')
+            <!-- MENU SUPERADMIN & HRD (DATA PELATIHAN & SDM) -->
+            @if(auth()->check() && in_array(auth()->user()->role, ['superadmin', 'hrd']))
                 <a href="{{ route('hrd.employees.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('hrd.employees.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
                     @if(request()->routeIs('hrd.employees.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
                     <i class="ph-fill ph-users text-xl"></i><span>Master Karyawan</span>
@@ -106,6 +94,22 @@
                     @if(request()->routeIs('hrd.participants.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
                     <i class="ph-fill ph-users-three text-xl"></i><span>Manajemen Peserta</span>
                 </a>
+            @endif
+
+            <!-- MENU SUPERADMIN (SISTEM) -->
+            @if(auth()->check() && auth()->user()->role == 'superadmin')
+                <a href="{{ route('superadmin.departments.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('superadmin.departments.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
+                    @if(request()->routeIs('superadmin.departments.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
+                    <i class="ph-fill ph-buildings text-xl"></i><span>Master Departemen</span>
+                </a>
+                <a href="{{ route('superadmin.users.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('superadmin.users.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
+                    @if(request()->routeIs('superadmin.users.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
+                    <i class="ph-fill ph-shield-check text-xl"></i><span>Manajemen Akun</span>
+                </a>
+            @endif
+
+            <!-- MENU HRD (MASTER DEPARTEMEN) -->
+            @if(auth()->check() && auth()->user()->role == 'hrd')
                 <a href="{{ route('hrd.departments.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('hrd.departments.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
                     @if(request()->routeIs('hrd.departments.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
                     <i class="ph-fill ph-buildings text-xl"></i><span>Master Departemen</span>

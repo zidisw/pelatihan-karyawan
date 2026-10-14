@@ -15,11 +15,14 @@
                 <p class="text-white/80 text-sm mt-1 max-w-xl">Kelola seluruh pengguna sistem, hak akses departemen, dan pantau infrastruktur data pelatihan karyawan.</p>
             </div>
             <div class="flex flex-wrap gap-2.5">
-                <a href="{{ route('superadmin.users.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-primary-700 font-bold text-sm shadow hover:bg-slate-50 transition-all">
-                    <i class="ph-bold ph-user-plus text-base"></i> Tambah User
+                <a href="{{ route('hrd.employees.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-primary-700 font-bold text-sm shadow hover:bg-slate-50 transition-all">
+                    <i class="ph-bold ph-users text-base"></i> Data Karyawan
                 </a>
-                <a href="{{ route('superadmin.departments.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-sm transition-all border border-white/20">
-                    <i class="ph-bold ph-plus text-base"></i> Tambah Departemen
+                <a href="{{ route('hrd.trainings.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-sm transition-all border border-white/20">
+                    <i class="ph-bold ph-graduation-cap text-base"></i> Program Pelatihan
+                </a>
+                <a href="{{ route('superadmin.users.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-sm transition-all border border-white/20">
+                    <i class="ph-bold ph-user-plus text-base"></i> Tambah User
                 </a>
             </div>
         </div>
@@ -33,7 +36,7 @@
                     <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-primary-600 shadow-sm">
                         <i class="ph-fill ph-users text-2xl"></i>
                     </div>
-                    <span class="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-1 rounded-full">Akun Aktif</span>
+                    <a href="{{ route('superadmin.users.index') }}" class="text-xs font-bold text-primary-600 hover:underline">Kelola &rarr;</a>
                 </div>
                 <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Total Pengguna</p>
                 <h3 class="text-3xl font-extrabold text-slate-800 mt-1">{{ $totalUsers }}</h3>
@@ -63,7 +66,7 @@
                     <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm">
                         <i class="ph-fill ph-identification-badge text-2xl"></i>
                     </div>
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">Karyawan</span>
+                    <a href="{{ route('hrd.employees.index') }}" class="text-xs font-bold text-emerald-600 hover:underline">Kelola &rarr;</a>
                 </div>
                 <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Total Karyawan</p>
                 <h3 class="text-3xl font-extrabold text-slate-800 mt-1">{{ $totalEmployees }}</h3>
@@ -76,7 +79,7 @@
                     <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 shadow-sm">
                         <i class="ph-fill ph-graduation-cap text-2xl"></i>
                     </div>
-                    <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">Program</span>
+                    <a href="{{ route('hrd.trainings.index') }}" class="text-xs font-bold text-amber-600 hover:underline">Katalog &rarr;</a>
                 </div>
                 <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Program Pelatihan</p>
                 <h3 class="text-3xl font-extrabold text-slate-800 mt-1">{{ $totalTrainings }}</h3>
