@@ -131,6 +131,10 @@
                     @if(request()->routeIs('hrd.participants.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
                     <i class="ph-fill ph-users-three text-xl"></i><span>Manajemen Peserta</span>
                 </a>
+                <a href="{{ route('hrd.departments.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('hrd.departments.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
+                    @if(request()->routeIs('hrd.departments.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
+                    <i class="ph-fill ph-buildings text-xl"></i><span>Master Departemen</span>
+                </a>
             @endif
 
             <!-- MENU DEPARTEMEN -->
