@@ -7,39 +7,14 @@
 
     <title>Raja Academy - Admin Panel</title>
 
-    <!-- Google Fonts & Phosphor Icons -->
+    <!-- Google Fonts & Phosphor Icons (Optimized) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script defer src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Scripts (Vite) -->
+    <!-- Pre-compiled Vite CSS & JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <!-- ========================================== -->
-    <!-- TAILWIND CDN (Agar tampilan langsung rapi) -->
-    <!-- ========================================== -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                        },
-                        background: '#f8fafc',
-                        surface: '#ffffff',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
 
     <!-- Custom CSS -->
     <style>
