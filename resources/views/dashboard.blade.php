@@ -1,162 +1,158 @@
 <x-app-layout>
     <x-slot name="header">
-        Dashboard Utama HRD
+        Dashboard Overview Admin Portal
     </x-slot>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <div class="w-full space-y-6">
 
-        <!-- 4 Stat Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Bagian Pertama: 2 Card / Widget Utama (Bisa Diklik) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <!-- Total Karyawan -->
-            <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+            <!-- Widget 1: Total Karyawan (Klik -> Page Data Karyawan) -->
+            <a href="{{ route('hrd.employees.index') }}" class="group bg-surface p-6 md:p-7 rounded-2xl shadow-sm border border-slate-100 hover:border-primary-300 hover:shadow-md hover:-translate-y-0.5 transition-all block">
                 <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-primary-600">
-                        <i class="ph-fill ph-users text-xl"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors shadow-sm">
+                        <i class="ph-fill ph-users text-2xl"></i>
                     </div>
-                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 bg-primary-50 px-2.5 py-1 rounded-full">
-                        Aktif
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-600 bg-primary-50 group-hover:bg-primary-600 group-hover:text-white px-3 py-1.5 rounded-full transition-colors">
+                        Lihat Data Karyawan
+                        <i class="ph-bold ph-arrow-right"></i>
                     </span>
                 </div>
                 <div>
-                    <p class="text-sm text-slate-500 font-medium mb-1">Total Karyawan</p>
-                    <h3 class="text-3xl font-extrabold text-slate-800">{{ $employees ?? 0 }}</h3>
+                    <p class="text-sm text-slate-500 font-semibold mb-1">Total Karyawan</p>
+                    <h3 class="text-4xl font-extrabold text-slate-800 group-hover:text-primary-600 transition-colors">{{ $employees ?? 0 }}</h3>
+                    <p class="text-xs text-slate-400 mt-2 font-medium">Klik untuk membuka halaman manajemen seluruh data karyawan</p>
                 </div>
-            </div>
+            </a>
 
-            <!-- Karyawan Pernah Pelatihan -->
-            <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+            <!-- Widget 2: Riwayat Pelatihan (Klik -> Page Riwayat Pelatihan) -->
+            <a href="{{ route('hrd.participants.index') }}" class="group bg-surface p-6 md:p-7 rounded-2xl shadow-sm border border-slate-100 hover:border-emerald-300 hover:shadow-md hover:-translate-y-0.5 transition-all block">
                 <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
-                        <i class="ph-fill ph-chalkboard-teacher text-xl"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors shadow-sm">
+                        <i class="ph-fill ph-users-three text-2xl"></i>
                     </div>
-                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full">
-                        Selesai
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 group-hover:bg-emerald-600 group-hover:text-white px-3 py-1.5 rounded-full transition-colors">
+                        Buka Riwayat Pelatihan
+                        <i class="ph-bold ph-arrow-right"></i>
                     </span>
                 </div>
                 <div>
-                    <p class="text-sm text-slate-500 font-medium mb-1">Karyawan Terlatih</p>
-                    <h3 class="text-3xl font-extrabold text-slate-800">{{ $trainedEmployees ?? 0 }}</h3>
+                    <p class="text-sm text-slate-500 font-semibold mb-1">Riwayat Pelatihan</p>
+                    <h3 class="text-4xl font-extrabold text-slate-800 group-hover:text-emerald-600 transition-colors">{{ $trainingHistoryCount ?? 0 }}</h3>
+                    <p class="text-xs text-slate-400 mt-2 font-medium">
+                        Klik untuk memantau Sertifikasi ({{ $totalCertifications ?? 0 }}) serta Technical & Soft Skill ({{ $totalParticipantRecords ?? 0 }})
+                    </p>
                 </div>
-            </div>
-
-            <!-- Pelatihan Dibuka -->
-            <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
-                        <i class="ph-fill ph-graduation-cap text-xl"></i>
-                    </div>
-                    <a href="{{ route('hrd.trainings.index') }}" class="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full hover:bg-amber-100">
-                        Kelola &rarr;
-                    </a>
-                </div>
-                <div>
-                    <p class="text-sm text-slate-500 font-medium mb-1">Pelatihan Dibuka</p>
-                    <h3 class="text-3xl font-extrabold text-slate-800">{{ $activeTrainings ?? 0 }}</h3>
-                </div>
-            </div>
-
-            <!-- Pengajuan Menunggu -->
-            <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500">
-                        <i class="ph-fill ph-clipboard-text text-xl"></i>
-                    </div>
-                    <span class="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full">
-                        Perlu Review
-                    </span>
-                </div>
-                <div>
-                    <p class="text-sm text-slate-500 font-medium mb-1">Pengajuan Pending</p>
-                    <h3 class="text-3xl font-extrabold text-slate-800">{{ $pendingRequestsCount ?? 0 }}</h3>
-                </div>
-            </div>
+            </a>
 
         </div>
 
+        <!-- Bagian Bawah Widget: Katalog Pelatihan Tersedia (Kiri) & Pengajuan Menunggu Persetujuan (Kanan) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-10">
 
-            <!-- Chart & Daftar Karyawan (2 Columns) -->
-            <div class="lg:col-span-2 space-y-6">
-
-                <!-- Chart Partisipasi Per Departemen -->
-                <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[400px]">
-                    <div class="flex justify-between items-center mb-6">
+            <!-- Kolom Kiri (2 Kolom): List Katalog Pelatihan yang Tersedia -->
+            <div class="lg:col-span-2 bg-surface p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
                         <div>
-                            <h3 class="text-lg font-bold text-slate-800">Distribusi Karyawan Per Departemen</h3>
-                            <p class="text-sm text-slate-500">Jumlah karyawan aktif per unit kerja</p>
+                            <h3 class="text-lg font-bold text-slate-800">Katalog Pelatihan yang Tersedia</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Daftar program pelatihan aktif dan terjadwal di Raja Academy</p>
                         </div>
-                        <span class="px-3 py-1 text-xs font-bold bg-primary-50 text-primary-700 rounded-lg">
-                            Realtime Data
-                        </span>
-                    </div>
-
-                    <div class="flex-1 mt-2 relative w-full min-h-[220px]">
-                        <canvas id="participationChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Karyawan Terbaru -->
-                <div class="bg-surface p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h3 class="text-lg font-bold text-slate-800">Karyawan Terbaru</h3>
-                            <p class="text-xs text-slate-400">Data karyawan yang baru ditambahkan ke sistem</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <a href="{{ route('hrd.employees.index') }}" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-primary-600 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors">
-                                Lihat Semua
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('hrd.trainings.index') }}" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-primary-600 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors">
+                                Kelola Katalog
                             </a>
-                            <a href="{{ route('hrd.employees.create') }}" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors">
-                                <i class="ph-bold ph-plus"></i> Tambah Karyawan
+                            <a href="{{ route('hrd.trainings.create') }}" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors">
+                                <i class="ph-bold ph-plus"></i> Tambah Pelatihan
                             </a>
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead>
-                                <tr class="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
-                                    <th class="pb-3 px-2">Nama & NIK</th>
-                                    <th class="pb-3 px-2">Departemen</th>
-                                    <th class="pb-3 px-2">Jabatan</th>
-                                    <th class="pb-3 px-2">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-50">
-                                @forelse($recentEmployees as $emp)
-                                <tr class="hover:bg-slate-50/70 transition-colors">
-                                    <td class="py-3 px-2">
-                                        <div class="font-bold text-slate-800">{{ $emp->nama }}</div>
-                                        <div class="text-xs text-slate-400">NIK: {{ $emp->nik }}</div>
-                                    </td>
-                                    <td class="py-3 px-2 text-xs text-slate-600">
-                                        {{ $emp->department->nama_departemen ?? '-' }}
-                                    </td>
-                                    <td class="py-3 px-2 text-xs text-slate-600">
-                                        {{ $emp->jabatan ?? '-' }}
-                                    </td>
-                                    <td class="py-3 px-2">
-                                        <span class="inline-flex px-2 py-0.5 text-[10px] font-bold rounded-full {{ $emp->status_karyawan === 'tetap' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-blue-50 text-blue-700 border border-blue-200' }}">
-                                            {{ ucfirst($emp->status_karyawan) }}
+                    <div class="space-y-4">
+                        @forelse($availableTrainings as $training)
+                        <div class="p-4 rounded-2xl bg-slate-50/70 border border-slate-100 hover:border-primary-200 transition-all">
+                            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                                <div class="space-y-1.5">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        @php
+                                            $kategoriClass = match($training->kategori) {
+                                                'Sertifikasi' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                'Technical Skill' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                                'Soft Skill' => 'bg-purple-50 text-purple-700 border-purple-200',
+                                                default => 'bg-slate-100 text-slate-600 border-slate-200',
+                                            };
+                                        @endphp
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase {{ $kategoriClass }}">
+                                            {{ $training->kategori ?? 'Program' }}
                                         </span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="py-6 text-center text-slate-400 text-xs">Belum ada data karyawan.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 uppercase">
+                                            {{ $training->metode_pelaksanaan }}
+                                        </span>
+                                        @if($training->kode_program)
+                                            <span class="text-[11px] font-bold text-slate-400">{{ $training->kode_program }}</span>
+                                        @endif
+                                    </div>
+
+                                    <h4 class="text-base font-extrabold text-slate-800">
+                                        <a href="{{ route('hrd.trainings.show', $training->id) }}" class="hover:text-primary-600 transition-colors">
+                                            {{ $training->nama_pelatihan }}
+                                        </a>
+                                    </h4>
+                                    <p class="text-xs text-slate-500 line-clamp-2">{{ $training->deskripsi }}</p>
+                                </div>
+
+                                <div class="flex sm:flex-col items-end justify-between shrink-0 gap-2">
+                                    @if($training->status_pendaftaran === 'dibuka')
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-600 border border-emerald-200">
+                                            Pendaftaran Dibuka
+                                        </span>
+                                    @else
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-slate-100 text-slate-500 border border-slate-200">
+                                            {{ ucfirst(str_replace('_', ' ', $training->status_pendaftaran)) }}
+                                        </span>
+                                    @endif
+
+                                    <a href="{{ route('hrd.trainings.show', $training->id) }}" class="text-xs font-bold text-primary-600 hover:text-primary-700 inline-flex items-center gap-1">
+                                        Detail &rarr;
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 pt-3 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+                                <div class="flex flex-wrap items-center gap-4">
+                                    <span>
+                                        <i class="ph-bold ph-calendar mr-1 text-slate-400"></i>
+                                        {{ \Carbon\Carbon::parse($training->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($training->tanggal_selesai)->format('d M Y') }}
+                                    </span>
+                                    <span>
+                                        <i class="ph-bold ph-chalkboard-teacher mr-1 text-slate-400"></i>
+                                        {{ $training->instruktur ?? '-' }}
+                                    </span>
+                                </div>
+                                <span class="font-semibold text-slate-600">
+                                    <i class="ph-bold ph-users mr-1 text-slate-400"></i>
+                                    Terdaftar: {{ $training->participants_count ?? 0 }} / {{ $training->kuota }} Kuota
+                                </span>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="py-12 text-center text-slate-400">
+                            <i class="ph-fill ph-graduation-cap text-3xl text-slate-300 mb-2"></i>
+                            <p class="text-xs font-semibold">Belum ada katalog pelatihan yang tersedia.</p>
+                        </div>
+                        @endforelse
                     </div>
                 </div>
 
+                <div class="pt-4 border-t border-slate-100 mt-6">
+                    <a href="{{ route('hrd.trainings.index') }}" class="block text-center text-xs font-bold text-primary-600 hover:text-primary-700 py-2">
+                        Lihat Seluruh Katalog Pelatihan &rarr;
+                    </a>
+                </div>
             </div>
 
-            <!-- Notifikasi Pengajuan Pelatihan (1 Column) -->
+            <!-- Kolom Kanan (1 Kolom): Pengajuan Menunggu Persetujuan -->
             <div class="bg-surface rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
@@ -207,47 +203,4 @@
 
         </div>
     </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const ctx = document.getElementById('participationChart');
-            if(ctx) {
-                const labels = {!! json_encode($chartLabels ?? []) !!};
-                const data = {!! json_encode($chartData ?? []) !!};
-
-                new Chart(ctx.getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: labels.length ? labels : ['Belum ada departemen'],
-                        datasets: [{
-                            label: 'Jumlah Karyawan',
-                            data: data.length ? data : [0],
-                            backgroundColor: '#3b82f6',
-                            hoverBackgroundColor: '#2563eb',
-                            borderRadius: 8,
-                            maxBarThickness: 45
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: '#f1f5f9' },
-                                ticks: { precision: 0, font: { family: 'Inter', size: 11 } }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { font: { family: 'Inter', size: 11 } }
-                            }
-                        }
-                    }
-                });
-            }
-        });
-    </script>
 </x-app-layout>

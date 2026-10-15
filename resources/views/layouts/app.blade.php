@@ -70,34 +70,37 @@
         <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-2 bg-surface">
 
             <!-- MENU GLOBAL -->
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('dashboard') ? 'bg-primary-50 text-primary-600 font-bold shadow-[inset_0_1px_2px_rgba(255,255,255,0.5)] relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
-                @if(request()->routeIs('dashboard')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full shadow-[0_0_12px_rgba(37,99,235,0.4)]"></div> @endif
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('dashboard') || request()->routeIs('*.dashboard') ? 'bg-primary-50 text-primary-600 font-bold shadow-[inset_0_1px_2px_rgba(255,255,255,0.5)] relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
+                @if(request()->routeIs('dashboard') || request()->routeIs('*.dashboard')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full shadow-[0_0_12px_rgba(37,99,235,0.4)]"></div> @endif
                 <i class="ph-fill ph-squares-four text-xl"></i>
                 <span>Dashboard</span>
             </a>
 
-            <!-- MENU SUPERADMIN & HRD (DATA PELATIHAN & SDM) -->
+            <!-- MENU ADMIN PORTAL & SUPERADMIN (5 MENU UTAMA PRD 5.1) -->
             @if(auth()->check() && in_array(auth()->user()->role, ['superadmin', 'hrd']))
                 <a href="{{ route('hrd.employees.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('hrd.employees.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
                     @if(request()->routeIs('hrd.employees.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
-                    <i class="ph-fill ph-users text-xl"></i><span>Master Karyawan</span>
-                </a>
-                <a href="{{ route('hrd.trainings.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('hrd.trainings.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
-                    @if(request()->routeIs('hrd.trainings.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
-                    <i class="ph-fill ph-graduation-cap text-xl"></i><span>Master Pelatihan</span>
-                </a>
-                <a href="{{ route('hrd.requests.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('hrd.requests.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
-                    @if(request()->routeIs('hrd.requests.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
-                    <i class="ph-fill ph-clipboard-text text-xl"></i><span>Persetujuan Pengajuan</span>
+                    <i class="ph-fill ph-users text-xl"></i><span>Data Karyawan</span>
                 </a>
                 <a href="{{ route('hrd.participants.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('hrd.participants.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
                     @if(request()->routeIs('hrd.participants.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
-                    <i class="ph-fill ph-users-three text-xl"></i><span>Manajemen Peserta</span>
+                    <i class="ph-fill ph-users-three text-xl"></i><span>Riwayat Pelatihan</span>
+                </a>
+                <a href="{{ route('hrd.trainings.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('hrd.trainings.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
+                    @if(request()->routeIs('hrd.trainings.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
+                    <i class="ph-fill ph-graduation-cap text-xl"></i><span>Katalog Pelatihan</span>
+                </a>
+                <a href="{{ route('hrd.requests.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('hrd.requests.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
+                    @if(request()->routeIs('hrd.requests.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
+                    <i class="ph-fill ph-clipboard-text text-xl"></i><span>Request Training</span>
                 </a>
             @endif
 
-            <!-- MENU SUPERADMIN (SISTEM) -->
+            <!-- MENU KHUSUS SUPERADMIN (MASTER DEPARTEMEN & MANAJEMEN AKUN) -->
             @if(auth()->check() && auth()->user()->role == 'superadmin')
+                <div class="pt-3 pb-1 px-4">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sistem Superadmin</p>
+                </div>
                 <a href="{{ route('superadmin.departments.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('superadmin.departments.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
                     @if(request()->routeIs('superadmin.departments.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
                     <i class="ph-fill ph-buildings text-xl"></i><span>Master Departemen</span>
@@ -108,23 +111,19 @@
                 </a>
             @endif
 
-            <!-- MENU HRD (MASTER DEPARTEMEN) -->
-            @if(auth()->check() && auth()->user()->role == 'hrd')
-                <a href="{{ route('hrd.departments.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('hrd.departments.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
-                    @if(request()->routeIs('hrd.departments.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
-                    <i class="ph-fill ph-buildings text-xl"></i><span>Master Departemen</span>
-                </a>
-            @endif
-
-            <!-- MENU DEPARTEMEN -->
+            <!-- MENU USER PORTAL / ADMIN DEPARTEMEN (PRD 5.2) -->
             @if(auth()->check() && auth()->user()->role == 'departemen')
-                <a href="{{ route('department.trainings.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('department.trainings.index') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
-                    @if(request()->routeIs('department.trainings.index')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
+                <a href="{{ route('department.trainings.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('department.trainings.index') || request()->routeIs('department.trainings.request') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
+                    @if(request()->routeIs('department.trainings.index') || request()->routeIs('department.trainings.request')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
                     <i class="ph-fill ph-book-open text-xl"></i><span>Daftar Pelatihan</span>
                 </a>
                 <a href="{{ route('department.trainings.history') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('department.trainings.history') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
                     @if(request()->routeIs('department.trainings.history')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
                     <i class="ph-fill ph-clock-counter-clockwise text-xl"></i><span>Riwayat Pengajuan</span>
+                </a>
+                <a href="{{ route('department.employees.index') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors {{ request()->routeIs('department.employees.*') ? 'bg-primary-50 text-primary-600 font-bold relative' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-semibold' }}">
+                    @if(request()->routeIs('department.employees.*')) <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-600 rounded-r-full"></div> @endif
+                    <i class="ph-fill ph-users text-xl"></i><span>Data Karyawan</span>
                 </a>
             @endif
         </nav>

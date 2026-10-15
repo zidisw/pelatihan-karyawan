@@ -73,9 +73,10 @@
                 <table class="w-full text-left border-collapse min-w-[800px]">
                     <thead>
                         <tr class="border-b border-slate-100">
-                            <th class="py-4 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest w-1/3">NAMA KARYAWAN & NIK</th>
+                            <th class="py-4 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest w-1/4">NAMA KARYAWAN & NIK</th>
                             <th class="py-4 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">DEPARTEMEN</th>
-                            <th class="py-4 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">JABATAN</th>
+                            <th class="py-4 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">LEVEL JABATAN</th>
+                            <th class="py-4 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">JOB TITLE</th>
                             <th class="py-4 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">STATUS</th>
                             <th class="py-4 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest text-right">AKSI</th>
                         </tr>
@@ -107,6 +108,9 @@
                                     <span class="text-xs font-bold text-slate-600">
                                         {{ $employee->department ? $employee->department->nama_departemen : '-' }}
                                     </span>
+                                </td>
+                                <td class="py-4 px-4">
+                                    <span class="text-xs font-bold text-slate-700">{{ $employee->level_jabatan ?? '-' }}</span>
                                 </td>
                                 <td class="py-4 px-4">
                                     <span class="text-xs font-medium text-slate-500">{{ $employee->jabatan ?? '-' }}</span>

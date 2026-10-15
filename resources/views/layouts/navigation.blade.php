@@ -18,19 +18,19 @@
 
                     @if (auth()->check() && in_array(auth()->user()->role, ['superadmin', 'hrd']))
                         <x-nav-link :href="route('hrd.employees.index')" :active="request()->routeIs('hrd.employees.*')">
-                            Master Karyawan
-                        </x-nav-link>
-
-                        <x-nav-link :href="route('hrd.trainings.index')" :active="request()->routeIs('hrd.trainings.*')">
-                            Master Pelatihan
-                        </x-nav-link>
-
-                        <x-nav-link :href="route('hrd.requests.index')" :active="request()->routeIs('hrd.requests.*')">
-                            Persetujuan Pengajuan
+                            Data Karyawan
                         </x-nav-link>
 
                         <x-nav-link :href="route('hrd.participants.index')" :active="request()->routeIs('hrd.participants.*')">
-                            Manajemen Peserta
+                            Riwayat Pelatihan
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('hrd.trainings.index')" :active="request()->routeIs('hrd.trainings.*')">
+                            Katalog Pelatihan
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('hrd.requests.index')" :active="request()->routeIs('hrd.requests.*')">
+                            Request Training
                         </x-nav-link>
                     @endif
 
@@ -44,12 +44,6 @@
                         </x-nav-link>
                     @endif
 
-                    @if (auth()->check() && auth()->user()->role == 'hrd')
-                        <x-nav-link :href="route('hrd.departments.index')" :active="request()->routeIs('hrd.departments.*')">
-                            Master Departemen
-                        </x-nav-link>
-                    @endif
-
                     @if (auth()->check() && auth()->user()->role == 'departemen')
                         <x-nav-link :href="route('department.trainings.index')" :active="request()->routeIs('department.trainings.index')">
                             Daftar Pelatihan
@@ -57,6 +51,10 @@
 
                         <x-nav-link :href="route('department.trainings.history')" :active="request()->routeIs('department.trainings.history')">
                             Riwayat Pengajuan
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('department.employees.index')" :active="request()->routeIs('department.employees.*')">
+                            Data Karyawan
                         </x-nav-link>
                     @endif
                 </div>
@@ -115,16 +113,16 @@
 
             @if (auth()->check() && in_array(auth()->user()->role, ['superadmin', 'hrd']))
                 <x-responsive-nav-link :href="route('hrd.employees.index')" :active="request()->routeIs('hrd.employees.*')">
-                    Master Karyawan
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('hrd.trainings.index')" :active="request()->routeIs('hrd.trainings.*')">
-                    Master Pelatihan
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('hrd.requests.index')" :active="request()->routeIs('hrd.requests.*')">
-                    Persetujuan Pengajuan
+                    Data Karyawan
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('hrd.participants.index')" :active="request()->routeIs('hrd.participants.*')">
-                    Manajemen Peserta
+                    Riwayat Pelatihan
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('hrd.trainings.index')" :active="request()->routeIs('hrd.trainings.*')">
+                    Katalog Pelatihan
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('hrd.requests.index')" :active="request()->routeIs('hrd.requests.*')">
+                    Request Training
                 </x-responsive-nav-link>
             @endif
 
@@ -137,18 +135,15 @@
                 </x-responsive-nav-link>
             @endif
 
-            @if (auth()->check() && auth()->user()->role == 'hrd')
-                <x-responsive-nav-link :href="route('hrd.departments.index')" :active="request()->routeIs('hrd.departments.*')">
-                    Master Departemen
-                </x-responsive-nav-link>
-            @endif
-
             @if (auth()->check() && auth()->user()->role == 'departemen')
                 <x-responsive-nav-link :href="route('department.trainings.index')" :active="request()->routeIs('department.trainings.index')">
                     Daftar Pelatihan
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('department.trainings.history')" :active="request()->routeIs('department.trainings.history')">
                     Riwayat Pengajuan
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('department.employees.index')" :active="request()->routeIs('department.employees.*')">
+                    Data Karyawan
                 </x-responsive-nav-link>
             @endif
         </div>

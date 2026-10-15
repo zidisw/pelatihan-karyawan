@@ -35,6 +35,7 @@ class DummyDataSeeder extends Seeder
             'nama' => 'Budi Santoso',
             'jenis_kelamin' => 'Laki-laki',
             'department_id' => $tcDept?->id,
+            'level_jabatan' => 'Head Of Section',
             'jabatan' => 'Senior Technical Instructor',
             'site_unit' => 'Head Office',
             'status_karyawan' => 'tetap',
@@ -48,6 +49,7 @@ class DummyDataSeeder extends Seeder
             'nama' => 'Siti Rahmawati',
             'jenis_kelamin' => 'Perempuan',
             'department_id' => $tcDept?->id,
+            'level_jabatan' => 'Group Leader',
             'jabatan' => 'System & Training Specialist',
             'site_unit' => 'Head Office',
             'status_karyawan' => 'kontrak',
@@ -61,6 +63,7 @@ class DummyDataSeeder extends Seeder
             'nama' => 'Dedi Maulana',
             'jenis_kelamin' => 'Laki-laki',
             'department_id' => $plmDept?->id,
+            'level_jabatan' => 'Head Of Section',
             'jabatan' => 'Mechanical Maintenance Engineer',
             'site_unit' => 'Site Kalimantan Timur',
             'status_karyawan' => 'tetap',
@@ -74,6 +77,7 @@ class DummyDataSeeder extends Seeder
             'nama' => 'Maya Anggraini',
             'jenis_kelamin' => 'Perempuan',
             'department_id' => $hrgaDept?->id,
+            'level_jabatan' => 'Head Of Department',
             'jabatan' => 'People Development Officer',
             'site_unit' => 'Head Office',
             'status_karyawan' => 'tetap',
@@ -87,6 +91,7 @@ class DummyDataSeeder extends Seeder
             'nama' => 'Rian Pratama',
             'jenis_kelamin' => 'Laki-laki',
             'department_id' => $plmDept?->id,
+            'level_jabatan' => 'Group Leader',
             'jabatan' => 'Heavy Equipment Electrical Specialist',
             'site_unit' => 'Site Kalimantan Timur',
             'status_karyawan' => 'kontrak',
@@ -100,6 +105,7 @@ class DummyDataSeeder extends Seeder
             'nama' => 'Andi Wijaya',
             'jenis_kelamin' => 'Laki-laki',
             'department_id' => $hseDept?->id,
+            'level_jabatan' => 'Penanggung Jawab Operational',
             'jabatan' => 'HSE Supervisor',
             'site_unit' => 'Site Kalimantan Selatan',
             'status_karyawan' => 'tetap',
@@ -113,13 +119,28 @@ class DummyDataSeeder extends Seeder
             'nama' => 'Hendra Kusuma',
             'jenis_kelamin' => 'Laki-laki',
             'department_id' => $modDept?->id,
-            'jabatan' => 'Mine Operation Foremen',
+            'level_jabatan' => 'Group Leader',
+            'jabatan' => 'Mine Operation Foreman',
             'site_unit' => 'Site Kalimantan Selatan',
             'status_karyawan' => 'tetap',
             'status_aktif' => 'aktif',
             'email' => 'hendra.kusuma@perusahaan.com',
             'nomor_hp' => '081377889900',
             'tanggal_join' => '2020-05-12',
+        ]);
+
+        $emp8 = Employee::updateOrCreate(['nik' => 'EMP-008'], [
+            'nama' => 'Fajar Nugroho',
+            'jenis_kelamin' => 'Laki-laki',
+            'department_id' => $logDept?->id,
+            'level_jabatan' => 'Head Of Section',
+            'jabatan' => 'Warehouse & Supply Chain Coordinator',
+            'site_unit' => 'Site Kalimantan Timur',
+            'status_karyawan' => 'tetap',
+            'status_aktif' => 'aktif',
+            'email' => 'fajar.nugroho@perusahaan.com',
+            'nomor_hp' => '081355667799',
+            'tanggal_join' => '2022-11-03',
         ]);
 
         // 2. Data Program Pelatihan (Katalog)
@@ -276,7 +297,7 @@ class DummyDataSeeder extends Seeder
             'status_peserta' => 'menunggu_review',
         ]);
 
-        // 4. Data Peserta Pelatihan (Training Participants / Realisasi)
+        // 4. Data Peserta Pelatihan (Training Participants / Realisasi Technical Skill, Soft Skill, & Sertifikasi)
         TrainingParticipant::updateOrCreate([
             'employee_id' => $emp1->id,
             'training_id' => $tr2->id,
@@ -284,6 +305,24 @@ class DummyDataSeeder extends Seeder
             'status_peserta' => 'selesai',
             'kehadiran' => 'hadir',
             'hasil_evaluasi' => 'Lulus dengan nilai 92 (Sangat Baik)',
+        ]);
+
+        TrainingParticipant::updateOrCreate([
+            'employee_id' => $emp3->id,
+            'training_id' => $tr2->id,
+        ], [
+            'status_peserta' => 'selesai',
+            'kehadiran' => 'hadir',
+            'hasil_evaluasi' => 'Lulus dengan nilai 89 (Sangat Baik)',
+        ]);
+
+        TrainingParticipant::updateOrCreate([
+            'employee_id' => $emp5->id,
+            'training_id' => $tr2->id,
+        ], [
+            'status_peserta' => 'selesai',
+            'kehadiran' => 'hadir',
+            'hasil_evaluasi' => 'Lulus dengan nilai 86 (Baik)',
         ]);
 
         TrainingParticipant::updateOrCreate([
@@ -295,6 +334,24 @@ class DummyDataSeeder extends Seeder
             'kehadiran' => 'hadir',
         ]);
 
+        TrainingParticipant::updateOrCreate([
+            'employee_id' => $emp4->id,
+            'training_id' => $tr4->id,
+        ], [
+            'status_peserta' => 'selesai',
+            'kehadiran' => 'hadir',
+            'hasil_evaluasi' => 'Lulus dengan nilai 94 (Sangat Baik)',
+        ]);
+
+        TrainingParticipant::updateOrCreate([
+            'employee_id' => $emp8->id,
+            'training_id' => $tr4->id,
+        ], [
+            'status_peserta' => 'selesai',
+            'kehadiran' => 'hadir',
+            'hasil_evaluasi' => 'Lulus dengan nilai 88 (Baik)',
+        ]);
+
         // 5. Data Sertifikasi Karyawan
         Certification::updateOrCreate([
             'employee_id' => $emp1->id,
@@ -304,6 +361,7 @@ class DummyDataSeeder extends Seeder
             'jenis_sertifikasi' => 'POP',
             'nomor_sertifikat' => 'CERT-POP-2025-0089',
             'tanggal_terbit' => '2025-02-01',
+            'masa_berlaku' => '3 Tahun',
             'tanggal_expired' => '2028-02-01',
             'is_permanent' => false,
         ]);
@@ -316,7 +374,8 @@ class DummyDataSeeder extends Seeder
             'jenis_sertifikasi' => 'K3',
             'nomor_sertifikat' => 'K3-REG-2024-5541',
             'tanggal_terbit' => '2024-05-15',
-            'tanggal_expired' => now()->addDays(25)->toDateString(), // Segera kedaluwarsa (1-30 hari)
+            'masa_berlaku' => '3 Tahun',
+            'tanggal_expired' => now()->addDays(25)->toDateString(), // Segera kedaluwarsa (<= 30 hari)
             'is_permanent' => false,
         ]);
 
@@ -327,8 +386,23 @@ class DummyDataSeeder extends Seeder
             'jenis_sertifikasi' => 'POM',
             'nomor_sertifikat' => 'CERT-POM-2024-1120',
             'tanggal_terbit' => '2024-01-10',
+            'masa_berlaku' => '3 Tahun',
             'tanggal_expired' => now()->addDays(60)->toDateString(), // Perlu perhatian (31-90 hari)
+            'is_permanent' => false,
+        ]);
+
+        Certification::updateOrCreate([
+            'employee_id' => $emp7->id,
+            'nama_sertifikasi' => 'Sertifikat Pengawas Operasional Pertama (POP)',
+        ], [
+            'training_id' => $tr1->id,
+            'jenis_sertifikasi' => 'POP',
+            'nomor_sertifikat' => 'CERT-POP-2021-0032',
+            'tanggal_terbit' => '2021-04-10',
+            'masa_berlaku' => '3 Tahun',
+            'tanggal_expired' => now()->subDays(12)->toDateString(), // Sudah Expired
             'is_permanent' => false,
         ]);
     }
 }
+

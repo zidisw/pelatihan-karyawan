@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nik')->unique();
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
             $table->foreignId('department_id')->constrained('departments')->cascadeOnDelete();
+            $table->string('level_jabatan')->nullable();
             $table->string('jabatan')->nullable();
             $table->string('site_unit')->nullable();
             $table->enum('status_karyawan', ['tetap', 'kontrak'])->default('tetap');

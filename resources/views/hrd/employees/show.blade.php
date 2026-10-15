@@ -65,7 +65,13 @@
                     <div class="mt-6 pt-6 border-t border-slate-100 text-left space-y-3.5 text-xs">
                         <div class="flex items-center justify-between">
                             <span class="text-slate-400 font-medium flex items-center gap-1.5">
-                                <i class="ph-bold ph-briefcase"></i> Jabatan
+                                <i class="ph-bold ph-medal"></i> Level Jabatan
+                            </span>
+                            <span class="font-bold text-slate-700">{{ $employee->level_jabatan ?? '-' }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-400 font-medium flex items-center gap-1.5">
+                                <i class="ph-bold ph-briefcase"></i> Job Title
                             </span>
                             <span class="font-bold text-slate-700">{{ $employee->jabatan ?? '-' }}</span>
                         </div>

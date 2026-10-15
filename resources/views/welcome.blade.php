@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduPulse - Training Management System</title>
+    <title>Raja Academy - Training Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
@@ -188,12 +188,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Portal Pembelajaran Terintegrasi Untuk Seluruh Departemen</p>
             <div class="flex flex-wrap justify-center items-center gap-4 md:gap-6">
-                <span class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm text-sm">HSE</span>
                 <span class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm text-sm">HRGA</span>
-                <span class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm text-sm">LOGISTIK</span>
+                <span class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm text-sm">TC</span>
+                <span class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm text-sm">CIVIL</span>
                 <span class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm text-sm">PLM</span>
                 <span class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm text-sm">MED</span>
+                <span class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm text-sm">LOGISTIK</span>
                 <span class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm text-sm">MOD</span>
+                <span class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm text-sm">HSE</span>
             </div>
         </div>
     </div>
@@ -270,7 +272,7 @@
                         <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white">
                             <i class="ph-fill ph-graduation-cap text-xl"></i>
                         </div>
-                        <h1 class="font-bold text-white text-lg tracking-tight">EduPulse</h1>
+                        <h1 class="font-bold text-white text-lg tracking-tight">Raja Academy</h1>
                     </div>
                     <p class="text-slate-400 text-sm leading-relaxed font-medium mb-6">Fasilitas portal pengembangan kompetensi yang dikelola oleh Departemen HR L&D Raja Academy.</p>
                 </div>

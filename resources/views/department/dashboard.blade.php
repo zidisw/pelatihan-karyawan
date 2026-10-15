@@ -33,7 +33,7 @@
                     <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm">
                         <i class="ph-fill ph-users text-2xl"></i>
                     </div>
-                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">Divisi Saya</span>
+                    <a href="{{ route('department.employees.index') }}" class="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-full transition-colors">Lihat Data &rarr;</a>
                 </div>
                 <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Karyawan Divisi</p>
                 <h3 class="text-3xl font-extrabold text-slate-800 mt-1">{{ $departmentEmployeesCount }}</h3>

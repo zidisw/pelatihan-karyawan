@@ -155,7 +155,34 @@
                             @enderror
                         </div>
                         <div>
-                            <label class="form-label">Jabatan</label>
+                            <label class="form-label">Level Jabatan</label>
+                            <div class="relative group">
+                                @php
+                                    $levelOptions = [
+                                        'Group Leader',
+                                        'Head Of Section',
+                                        'Head Of Department',
+                                        'Penanggung Jawab Operational',
+                                    ];
+                                @endphp
+                                <select name="level_jabatan" class="form-input appearance-none cursor-pointer" required>
+                                    <option value="" disabled {{ old('level_jabatan', $employee->level_jabatan) == '' ? 'selected' : '' }}>Pilih level jabatan</option>
+                                    @foreach ($levelOptions as $lvl)
+                                        <option value="{{ $lvl }}" {{ old('level_jabatan', $employee->level_jabatan) == $lvl ? 'selected' : '' }}>
+                                            {{ $lvl }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center px-2 text-slate-400 group-hover:text-slate-600 transition duration-200">
+                                    <i class="ph-bold ph-caret-down"></i>
+                                </div>
+                            </div>
+                            @error('level_jabatan')
+                                <span class="text-red-500 text-xs font-bold mt-1 block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="form-label">Job Title / Jabatan</label>
                             <input type="text" name="jabatan" value="{{ old('jabatan', $employee->jabatan) }}" placeholder="Contoh: Senior HSE Specialist" class="form-input" />
                             @error('jabatan')
                                 <span class="text-red-500 text-xs font-bold mt-1 block">{{ $message }}</span>

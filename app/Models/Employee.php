@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
     'nik',
     'jenis_kelamin',
     'department_id',
+    'level_jabatan',
     'jabatan',
     'site_unit',
     'status_karyawan',

@@ -18,10 +18,22 @@ class EmployeeController extends Controller
     //     return view('hrd.employees.index', compact('employees'));
     // }
 
-    public function index()
+    public function index(Request $request)
     {
-        // 1. Mengambil data karyawan dengan pagination
-        $employees = Employee::with('department')->paginate(10);
+        // 1. Mengambil data karyawan dengan filter pencarian & pagination
+        $query = Employee::with('department');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nik', 'like', "%{$search}%")
+                  ->orWhere('level_jabatan', 'like', "%{$search}%")
+                  ->orWhere('jabatan', 'like', "%{$search}%");
+            });
+        }
+
+        $employees = $query->paginate(10)->withQueryString();
 
         // 2. Menghitung data statistik pelatihan berdasarkan tanggal
         $today = now()->toDateString();
@@ -53,12 +65,11 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
-
-        // dd($request->all());
         $request->validate([
             'nama' => 'required|string|max:255',
             'nik' => 'required|string|unique:employees,nik',
             'department_id' => 'required|exists:departments,id',
+            'level_jabatan' => 'required|in:Group Leader,Head Of Section,Head Of Department,Penanggung Jawab Operational',
             'jabatan' => 'nullable|string|max:255',
             'status_karyawan' => 'required|in:tetap,kontrak',
             'email' => 'nullable|email',
@@ -83,6 +94,7 @@ class EmployeeController extends Controller
             'nama' => 'required|string|max:255',
             'nik' => 'required|string|unique:employees,nik,' . $employee->id,
             'department_id' => 'required|exists:departments,id',
+            'level_jabatan' => 'required|in:Group Leader,Head Of Section,Head Of Department,Penanggung Jawab Operational',
             'jabatan' => 'nullable|string|max:255',
             'status_karyawan' => 'required|in:tetap,kontrak',
             'email' => 'nullable|email',

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - EduPulse Portal L&D</title>
+    <title>Login - Raja Academy Portal L&D</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
@@ -71,14 +71,14 @@
 
         <!-- Logo & Header -->
         <div class="relative z-10">
-            <a href="#"
+            <a href="{{ url('/') }}"
                 class="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/20 hover:bg-white/20 transition-all">
                 <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-primary-600 shadow-sm">
                     <i class="ph-fill ph-graduation-cap text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-white text-lg leading-none tracking-tight">EduPulse</h1>
-                    <p class="text-[9px] font-bold text-primary-100 uppercase tracking-widest mt-0.5">Raja Academy</p>
+                    <h1 class="font-extrabold text-white text-lg leading-none tracking-tight">Raja Academy</h1>
+                    <p class="text-[9px] font-bold text-primary-100 uppercase tracking-widest mt-0.5">Portal Internal</p>
                 </div>
             </a>
         </div>
@@ -125,7 +125,7 @@
 
         <!-- Back to Home (Mobile Only) -->
         <div class="absolute top-6 left-6 lg:hidden">
-            <a href="#"
+            <a href="{{ url('/') }}"
                 class="flex items-center gap-2 text-slate-500 text-sm font-bold hover:text-primary-600 transition-colors">
                 <i class="ph-bold ph-arrow-left text-lg"></i> Kembali
             </a>
@@ -140,7 +140,7 @@
                     <i class="ph-fill ph-graduation-cap text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-slate-800 text-xl leading-none tracking-tight">EduPulse</h1>
+                    <h1 class="font-extrabold text-slate-800 text-xl leading-none tracking-tight">Raja Academy</h1>
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Portal Internal</p>
                 </div>
             </div>

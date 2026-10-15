@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
     'nama_sertifikasi',
     'nomor_sertifikat',
     'tanggal_terbit',
+    'masa_berlaku',
     'tanggal_expired',
     'is_permanent',
     'file_sertifikat',

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('nama_sertifikasi');
             $table->string('nomor_sertifikat')->nullable();
             $table->date('tanggal_terbit')->nullable();
+            $table->string('masa_berlaku')->nullable();
             $table->date('tanggal_expired')->nullable();
             $table->boolean('is_permanent')->default(false);
             $table->string('file_sertifikat')->nullable();
