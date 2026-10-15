@@ -19,11 +19,13 @@ class UserSeeder extends Seeder
         $plm  = Department::where('nama_departemen', 'PLM')->first();
         $hse  = Department::where('nama_departemen', 'HSE')->first();
 
+        $defaultPassword = Hash::make('password123');
+
         DB::table('users')->insert([
             [
                 'name' => 'Jordi',
                 'email' => 'superadmin@pelatihan.com',
-                'password' => Hash::make('password123'),
+                'password' => $defaultPassword,
                 'role' => 'superadmin',
                 'department_id' => null,
                 'created_at' => now(),
@@ -32,7 +34,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin HRGA',
                 'email' => 'hrd@pelatihan.com',
-                'password' => Hash::make('password123'),
+                'password' => $defaultPassword,
                 'role' => 'hrd',
                 'department_id' => $hrga?->id ?? 1,
                 'created_at' => now(),
@@ -41,7 +43,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin TC / IT',
                 'email' => 'admin.it@pelatihan.com',
-                'password' => Hash::make('password123'),
+                'password' => $defaultPassword,
                 'role' => 'departemen',
                 'department_id' => $tc?->id ?? 2,
                 'created_at' => now(),
@@ -50,7 +52,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin Engineering (PLM)',
                 'email' => 'admin.engineering@pelatihan.com',
-                'password' => Hash::make('password123'),
+                'password' => $defaultPassword,
                 'role' => 'departemen',
                 'department_id' => $plm?->id ?? 4,
                 'created_at' => now(),
@@ -59,7 +61,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin HSE',
                 'email' => 'admin.hse@pelatihan.com',
-                'password' => Hash::make('password123'),
+                'password' => $defaultPassword,
                 'role' => 'departemen',
                 'department_id' => $hse?->id ?? 8,
                 'created_at' => now(),
