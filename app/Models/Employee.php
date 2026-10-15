@@ -6,7 +6,20 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['nama', 'nik', 'department_id', 'jabatan', 'status_karyawan', 'email', 'nomor_hp', 'tanggal_join', 'foto'])]
+#[Fillable([
+    'nama',
+    'nik',
+    'jenis_kelamin',
+    'department_id',
+    'jabatan',
+    'site_unit',
+    'status_karyawan',
+    'status_aktif',
+    'email',
+    'nomor_hp',
+    'tanggal_join',
+    'foto',
+])]
 class Employee extends Model
 {
     use HasFactory;
@@ -19,6 +32,11 @@ class Employee extends Model
     public function trainingRequests()
     {
         return $this->hasMany(TrainingRequest::class);
+    }
+
+    public function requestParticipants()
+    {
+        return $this->hasMany(TrainingRequestParticipant::class);
     }
 
     public function trainingParticipants()
@@ -34,6 +52,6 @@ class Employee extends Model
     public function trainings()
     {
         return $this->belongsToMany(Training::class, 'training_participants', 'employee_id', 'training_id')
-            ->withPivot('id', 'status_peserta', 'created_at', 'updated_at');
+            ->withPivot('id', 'status_peserta', 'kehadiran', 'hasil_evaluasi', 'created_at', 'updated_at');
     }
 }

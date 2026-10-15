@@ -14,9 +14,14 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         DB::table('departments')->insert([
-            ['nama_departemen' => 'Human Resources', 'deskripsi' => 'Departemen SDM dan HRD', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_departemen' => 'Teknologi Informasi', 'deskripsi' => 'Departemen IT dan Sistem Informasi', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_departemen' => 'Engineering', 'deskripsi' => 'Departemen Teknik dan Pemeliharaan', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_departemen' => 'HRGA', 'deskripsi' => 'Human Resources & General Affairs', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_departemen' => 'TC', 'deskripsi' => 'Training Center & Technical Control', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_departemen' => 'CIVIL', 'deskripsi' => 'Civil Engineering & Infrastructure', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_departemen' => 'PLM', 'deskripsi' => 'Plant Maintenance & Equipment', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_departemen' => 'MED', 'deskripsi' => 'Medical & Occupational Health', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_departemen' => 'LOGISTIK', 'deskripsi' => 'Logistics & Supply Chain Management', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_departemen' => 'MOD', 'deskripsi' => 'Mine Operation Department', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_departemen' => 'HSE', 'deskripsi' => 'Health, Safety, and Environment', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

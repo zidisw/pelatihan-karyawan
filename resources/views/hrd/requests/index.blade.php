@@ -124,28 +124,36 @@
                         @forelse ($requests as $req)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="py-5 px-4">
-                                <div class="font-bold text-slate-800">{{ $req->employee->nama }}</div>
-                                <div class="text-[11px] text-slate-400 uppercase tracking-wide">NIK: {{ $req->employee->nik }}</div>
+                                <div class="font-bold text-slate-800">{{ $req->employee?->nama ?? 'Multi Peserta' }}</div>
+                                <div class="text-[11px] text-slate-400 uppercase tracking-wide">NIK: {{ $req->employee?->nik ?? '-' }}</div>
                             </td>
-                            <td class="py-5 px-4 font-medium text-slate-600">{{ $req->training->nama_pelatihan }}</td>
+                            <td class="py-5 px-4 font-medium text-slate-600">
+                                {{ $req->training?->nama_pelatihan ?? $req->training_need ?? $req->scope_program ?? 'Usulan Training Baru' }}
+                                @if($req->jenis_request === 'training_baru')
+                                    <span class="ml-1 inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-200">Training Baru</span>
+                                @endif
+                            </td>
                             <td class="py-5 px-4 text-sm font-medium text-slate-500">{{ $req->diajukanOleh->name ?? 'Sistem' }}</td>
                             <td class="py-5 px-4 text-center">
                                 @php
                                     $statusClasses = [
-                                        'pending'  => 'bg-amber-50 text-amber-600 border border-amber-200',
-                                        'approved' => 'bg-emerald-50 text-emerald-600 border border-emerald-200',
-                                        'rejected' => 'bg-rose-50 text-rose-600 border border-rose-200'
+                                        'menunggu_review'    => 'bg-amber-50 text-amber-600 border border-amber-200',
+                                        'pending'            => 'bg-amber-50 text-amber-600 border border-amber-200',
+                                        'approved'           => 'bg-emerald-50 text-emerald-600 border border-emerald-200',
+                                        'partially_approved' => 'bg-blue-50 text-blue-600 border border-blue-200',
+                                        'rejected'           => 'bg-rose-50 text-rose-600 border border-rose-200',
+                                        'cancelled'          => 'bg-slate-100 text-slate-500 border border-slate-200',
                                     ];
                                 @endphp
                                 <span class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider {{ $statusClasses[$req->status] ?? 'bg-slate-100' }}">
-                                    {{ $req->status }}
+                                    {{ str_replace('_', ' ', $req->status) }}
                                 </span>
                                 @if($req->catatan_admin)
                                     <p class="text-[10px] text-slate-400 italic mt-1 max-w-[150px] truncate">"{{ $req->catatan_admin }}"</p>
                                 @endif
                             </td>
                             <td class="py-5 px-4">
-                                @if($req->status == 'pending')
+                                @if(in_array($req->status, ['pending', 'menunggu_review']))
                                     <form action="{{ route('hrd.requests.process', $req->id) }}" method="POST" class="flex flex-col gap-2">
                                         @csrf @method('PATCH')
                                         <input type="text" name="catatan_admin" placeholder="Catatan (opsional)..." class="w-full text-[11px] border-2 border-slate-100 rounded-xl px-3 py-2 bg-slate-50 focus:border-blue-400 outline-none">

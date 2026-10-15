@@ -29,18 +29,21 @@ class TrainingRequestController extends Controller
         $trainingRequest->update([
             'status' => $request->status,
             'catatan_admin' => $request->catatan_admin,
+            'reviewed_by' => auth()->id(),
+            'reviewed_at' => now(),
         ]);
 
-        // Jika disetujui (approved), masukkan ke tabel peserta
-        if ($request->status == 'approved') {
+        // Jika disetujui (approved) dan terhubung ke katalog pelatihan, masukkan ke tabel peserta
+        if ($request->status == 'approved' && $trainingRequest->training_id && $trainingRequest->employee_id) {
             $isParticipant = TrainingParticipant::where('employee_id', $trainingRequest->employee_id)
                 ->where('training_id', $trainingRequest->training_id)
                 ->exists();
 
-         if (!$isParticipant) {
+            if (!$isParticipant) {
                 TrainingParticipant::create([
                     'employee_id' => $trainingRequest->employee_id,
                     'training_id' => $trainingRequest->training_id,
+                    'training_request_id' => $trainingRequest->id,
 
                     // Akhirnya pakai nilai yang benar-benar ada di database! 🎉
                     'status_peserta' => 'disetujui',

@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('training_participants', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('training_request_id')->nullable()->constrained('training_requests')->nullOnDelete();
             $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
             $table->foreignId('training_id')->constrained('trainings')->cascadeOnDelete();
-            $table->enum('status_peserta', ['belum_diajukan', 'diajukan', 'disetujui', 'sedang_pelatihan', 'selesai'])->default('belum_diajukan');
+            $table->enum('status_peserta', ['belum_diajukan', 'diajukan', 'disetujui', 'terjadwal', 'sedang_pelatihan', 'selesai', 'tidak_hadir', 'dibatalkan'])->default('belum_diajukan');
+            $table->enum('kehadiran', ['belum_dicatat', 'hadir', 'tidak_hadir', 'izin'])->default('belum_dicatat');
+            $table->text('hasil_evaluasi')->nullable();
             $table->timestamps();
         });
     }

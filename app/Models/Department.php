@@ -26,4 +26,10 @@ class Department extends Model
     {
         return $this->hasMany(Employee::class);
     }
+
+    // Relasi: Satu departemen memiliki banyak Pengajuan Pelatihan
+    public function trainingRequests()
+    {
+        return $this->hasMany(TrainingRequest::class);
+    }
 }

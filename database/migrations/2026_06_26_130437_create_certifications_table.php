@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('certifications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
+            $table->foreignId('training_id')->nullable()->constrained('trainings')->nullOnDelete();
+            $table->string('jenis_sertifikasi')->default('Lainnya');
             $table->string('nama_sertifikasi');
             $table->string('nomor_sertifikat')->nullable();
             $table->date('tanggal_terbit')->nullable();
             $table->date('tanggal_expired')->nullable();
+            $table->boolean('is_permanent')->default(false);
             $table->string('file_sertifikat')->nullable();
             $table->timestamps();
         });

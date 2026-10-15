@@ -174,13 +174,13 @@
                         <div class="p-3.5 rounded-xl bg-slate-50/70 border border-slate-100 space-y-2">
                             <div class="flex justify-between items-start">
                                 <span class="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded uppercase">
-                                    {{ $req->employee->department->nama_departemen ?? 'Divisi' }}
+                                    {{ $req->department?->nama_departemen ?? $req->employee?->department?->nama_departemen ?? 'Divisi' }}
                                 </span>
                                 <span class="text-[10px] text-slate-400 font-medium">{{ $req->created_at->diffForHumans() }}</span>
                             </div>
-                            <h4 class="text-sm font-bold text-slate-800">{{ $req->employee->nama ?? 'N/A' }}</h4>
+                            <h4 class="text-sm font-bold text-slate-800">{{ $req->employee?->nama ?? 'N/A' }}</h4>
                             <p class="text-xs text-slate-500 line-clamp-2">
-                                Mengajukan pelatihan: <strong class="text-slate-700">{{ $req->training->nama_pelatihan ?? '-' }}</strong>
+                                Mengajukan pelatihan: <strong class="text-slate-700">{{ $req->training?->nama_pelatihan ?? $req->training_need ?? $req->scope_program ?? '-' }}</strong>
                             </p>
                             <div class="pt-2 flex justify-end">
                                 <a href="{{ route('hrd.requests.index') }}" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-lg transition-colors inline-flex items-center gap-1">

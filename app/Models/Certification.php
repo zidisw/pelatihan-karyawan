@@ -6,13 +6,40 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['employee_id', 'nama_sertifikasi', 'nomor_sertifikat', 'tanggal_terbit', 'tanggal_expired', 'file_sertifikat'])]
+#[Fillable([
+    'employee_id',
+    'training_id',
+    'jenis_sertifikasi',
+    'nama_sertifikasi',
+    'nomor_sertifikat',
+    'tanggal_terbit',
+    'tanggal_expired',
+    'is_permanent',
+    'file_sertifikat',
+])]
 class Certification extends Model
 {
     use HasFactory;
 
+    protected function casts(): array
+    {
+        return [
+            'is_permanent' => 'boolean',
+        ];
+    }
+
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function training()
+    {
+        return $this->belongsTo(Training::class);
+    }
+
+    public function reminders()
+    {
+        return $this->hasMany(CertificateReminder::class);
     }
 }

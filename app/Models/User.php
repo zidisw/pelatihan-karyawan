@@ -34,4 +34,19 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Department::class);
     }
+
+    public function trainingRequests()
+    {
+        return $this->hasMany(TrainingRequest::class, 'diajukan_oleh');
+    }
+
+    public function appNotifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function auditLogs()
+    {
+        return $this->hasMany(AuditLog::class);
+    }
 }

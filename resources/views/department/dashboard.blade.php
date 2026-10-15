@@ -110,15 +110,15 @@
                             @forelse($recentRequests as $req)
                             <tr class="hover:bg-slate-50/70 transition-colors">
                                 <td class="py-3 px-3">
-                                    <div class="font-bold text-slate-800">{{ $req->employee->nama ?? 'N/A' }}</div>
-                                    <div class="text-xs text-slate-400">NIK: {{ $req->employee->nik ?? '-' }}</div>
+                                    <div class="font-bold text-slate-800">{{ $req->employee?->nama ?? 'N/A' }}</div>
+                                    <div class="text-xs text-slate-400">NIK: {{ $req->employee?->nik ?? '-' }}</div>
                                 </td>
                                 <td class="py-3 px-3">
-                                    <div class="font-semibold text-slate-700 text-xs">{{ $req->training->nama_pelatihan ?? 'N/A' }}</div>
+                                    <div class="font-semibold text-slate-700 text-xs">{{ $req->training?->nama_pelatihan ?? $req->training_need ?? $req->scope_program ?? 'N/A' }}</div>
                                     <div class="text-[11px] text-slate-400">{{ $req->created_at->diffForHumans() }}</div>
                                 </td>
                                 <td class="py-3 px-3">
-                                    @if($req->status === 'pending')
+                                    @if(in_array($req->status, ['pending', 'menunggu_review']))
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span> Menunggu
                                         </span>
