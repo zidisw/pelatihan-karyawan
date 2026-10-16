@@ -73,6 +73,8 @@ Route::middleware(['auth', 'role:hrd'])->group(function () {
     Route::get('/hrd/trainings/{training}/edit', [TrainingController::class, 'edit'])->name('hrd.trainings.edit');
     Route::get('/hrd/trainings/{training}/show', [TrainingController::class, 'show'])->name('hrd.trainings.show');
     Route::put('/hrd/trainings/{training}', [TrainingController::class, 'update'])->name('hrd.trainings.update');
+    Route::patch('/hrd/trainings/{training}/archive', [TrainingController::class, 'archive'])->name('hrd.trainings.archive');
+    Route::delete('/hrd/trainings/documents/{document}', [TrainingController::class, 'destroyDocument'])->name('hrd.trainings.documents.destroy');
     Route::delete('/hrd/trainings/{training}', [TrainingController::class, 'destroy'])->name('hrd.trainings.destroy');
 
     // Rute Request Training (Verifikasi Pengajuan Pelatihan oleh HRD)
