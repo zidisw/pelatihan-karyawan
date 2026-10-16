@@ -127,20 +127,28 @@
                                         {{ $employee->status_karyawan }}
                                     </span>
                                 </td>
-                                <td class="py-4 px-4 text-right space-x-1.5">
-                                    <a href="{{ route('hrd.employees.show', $employee->id) }}" class="inline-block text-xs font-bold text-primary-600 hover:text-primary-700 bg-primary-50 px-3 py-1.5 rounded-lg transition-colors">Detail</a>
-                                    <a href="{{ route('hrd.employees.edit', $employee->id) }}" class="inline-block text-xs font-bold text-amber-500 hover:text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg transition-colors">Edit</a>
+                                <td class="py-4 px-4 text-right" style="white-space: nowrap;">
+                                    <div class="inline-flex items-center justify-end gap-2">
+                                        <a href="{{ route('hrd.employees.show', $employee->id) }}" class="inline-flex items-center gap-1 text-xs font-bold text-primary-600 hover:text-white bg-primary-50 hover:bg-primary-600 border border-primary-100 px-3 py-1.5 rounded-lg transition-colors">
+                                            <i class="ph-bold ph-eye"></i> Detail
+                                        </a>
+                                        <a href="{{ route('hrd.employees.edit', $employee->id) }}" class="inline-flex items-center gap-1 text-xs font-bold text-amber-600 hover:text-white bg-amber-50 hover:bg-amber-500 border border-amber-200 px-3 py-1.5 rounded-lg transition-colors">
+                                            <i class="ph-bold ph-pencil-simple"></i> Edit
+                                        </a>
 
-                                    <form action="{{ route('hrd.employees.destroy', $employee->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus karyawan ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-xs font-bold text-rose-500 hover:text-rose-600 bg-rose-50 px-3 py-1.5 rounded-lg transition-colors">Hapus</button>
-                                    </form>
+                                        <form action="{{ route('hrd.employees.destroy', $employee->id) }}" method="POST" class="inline-flex m-0" onsubmit="return confirm('Yakin ingin menghapus karyawan ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="inline-flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-white bg-rose-50 hover:bg-rose-600 border border-rose-200 px-3 py-1.5 rounded-lg transition-colors">
+                                                <i class="ph-bold ph-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-8 text-center text-slate-400 font-medium text-sm">
+                                <td colspan="6" class="py-8 text-center text-slate-400 font-medium text-sm">
                                     Belum ada data karyawan. Silahkan tambah data baru.
                                 </td>
                             </tr>

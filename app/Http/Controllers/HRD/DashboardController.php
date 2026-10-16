@@ -32,7 +32,8 @@ class DashboardController extends Controller
         // 4. Pengajuan Menunggu Persetujuan HRD (Bagian Kanan Bawah)
         $pendingRequestsCount = TrainingRequest::whereIn('status', ['pending', 'menunggu_review'])->count();
 
-        $recentPendingRequests = TrainingRequest::with(['department', 'employee.department', 'training', 'diajukanOleh'])
+        $recentPendingRequests = TrainingRequest::with(['department', 'employee.department', 'training', 'diajukanOleh', 'participants.employee'])
+            ->withCount('participants')
             ->whereIn('status', ['pending', 'menunggu_review'])
             ->latest()
             ->take(5)

@@ -119,21 +119,37 @@
                                 </div>
                             </div>
 
+                            @php
+                                $terisi = $training->participants_count ?? 0;
+                                $kuotaTotal = $training->kuota ?? 0;
+                                $sisaKuota = max(0, $kuotaTotal - $terisi);
+                            @endphp
                             <div class="mt-3 pt-3 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
                                 <div class="flex flex-wrap items-center gap-4">
                                     <span>
                                         <i class="ph-bold ph-calendar mr-1 text-slate-400"></i>
                                         {{ \Carbon\Carbon::parse($training->tanggal_mulai)->format('d M Y') }} - {{ \Carbon\Carbon::parse($training->tanggal_selesai)->format('d M Y') }}
                                     </span>
+                                    @if($training->batas_pendaftaran)
+                                        <span class="text-amber-700 font-semibold">
+                                            <i class="ph-bold ph-clock-countdown mr-1 text-amber-500"></i>
+                                            Batas Daftar: {{ \Carbon\Carbon::parse($training->batas_pendaftaran)->format('d M Y') }}
+                                        </span>
+                                    @endif
                                     <span>
                                         <i class="ph-bold ph-chalkboard-teacher mr-1 text-slate-400"></i>
                                         {{ $training->instruktur ?? '-' }}
                                     </span>
                                 </div>
-                                <span class="font-semibold text-slate-600">
-                                    <i class="ph-bold ph-users mr-1 text-slate-400"></i>
-                                    Terdaftar: {{ $training->participants_count ?? 0 }} / {{ $training->kuota }} Kuota
-                                </span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-semibold text-slate-600 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                                        <i class="ph-bold ph-users mr-1 text-slate-400"></i>
+                                        Terdaftar: {{ $terisi }} / {{ $kuotaTotal }}
+                                    </span>
+                                    <span class="font-bold px-2.5 py-1 rounded-lg border {{ $sisaKuota > 5 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : ($sisaKuota > 0 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200') }}">
+                                        Sisa Kuota: {{ $sisaKuota }} Kursi
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         @empty
@@ -167,14 +183,46 @@
 
                     <div class="space-y-4">
                         @forelse($recentPendingRequests as $req)
-                        <div class="p-3.5 rounded-xl bg-slate-50/70 border border-slate-100 space-y-2">
-                            <div class="flex justify-between items-start">
-                                <span class="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded uppercase">
-                                    {{ $req->department?->nama_departemen ?? $req->employee?->department?->nama_departemen ?? 'Divisi' }}
-                                </span>
+                        @php
+                            $jumlahPeserta = max(1, $req->participants_count ?? $req->participants->count());
+                            $namaUtama = $req->employee?->nama ?? $req->participants->first()?->nama_peserta ?? $req->participants->first()?->employee?->nama ?? 'Peserta Departemen';
+                            $isTrainingBaru = ($req->jenis_request ?? 'katalog') === 'training_baru';
+                        @endphp
+                        <div class="p-3.5 rounded-xl bg-slate-50/70 border border-slate-100 space-y-2 hover:border-primary-200 transition-colors">
+                            <div class="flex flex-wrap justify-between items-center gap-1.5">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded uppercase border border-primary-100">
+                                        {{ $req->department?->nama_departemen ?? $req->employee?->department?->nama_departemen ?? 'Divisi' }}
+                                    </span>
+                                    @if($isTrainingBaru)
+                                        <span class="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded uppercase border border-purple-200">
+                                            Training Baru
+                                        </span>
+                                    @else
+                                        <span class="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded uppercase border border-blue-200">
+                                            Katalog
+                                        </span>
+                                    @endif
+                                </div>
                                 <span class="text-[10px] text-slate-400 font-medium">{{ $req->created_at->diffForHumans() }}</span>
                             </div>
-                            <h4 class="text-sm font-bold text-slate-800">{{ $req->employee?->nama ?? 'N/A' }}</h4>
+
+                            <div class="flex items-center justify-between gap-2">
+                                <h4 class="text-sm font-bold text-slate-800">
+                                    {{ $namaUtama }}
+                                    @if($jumlahPeserta > 1)
+                                        <span class="text-xs font-semibold text-primary-600">(+{{ $jumlahPeserta - 1 }} lainnya)</span>
+                                    @endif
+                                </h4>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600">
+                                    <i class="ph-bold ph-users"></i> {{ $jumlahPeserta }} Peserta
+                                </span>
+                            </div>
+
+                            @if($req->nomor_request)
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">No: {{ $req->nomor_request }}</p>
+                            @endif
+
                             <p class="text-xs text-slate-500 line-clamp-2">
                                 Mengajukan pelatihan: <strong class="text-slate-700">{{ $req->training?->nama_pelatihan ?? $req->training_need ?? $req->scope_program ?? '-' }}</strong>
                             </p>
