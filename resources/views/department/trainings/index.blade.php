@@ -143,6 +143,12 @@
                                 <span class="font-medium">{{ $training->lokasi }}</span>
                             </div>
                         @endif
+                        @if($training->documents && $training->documents->isNotEmpty())
+                            <div class="flex items-center gap-2.5 text-blue-600">
+                                <i class="ph-fill ph-file-text text-base"></i>
+                                <span class="font-bold">{{ $training->documents->count() }} Dokumen Pendukung (Silabus/Brosur/TOR)</span>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Dynamic Quota Box (BR-08) -->
@@ -166,19 +172,25 @@
                         </div>
                     </div>
 
-                    <!-- Button -->
-                    @if($remainingQuota > 0)
-                        <a href="{{ route('department.trainings.request', $training->id) }}"
-                           class="w-full inline-flex items-center justify-center gap-2 bg-slate-800 text-white font-bold text-xs py-3 rounded-xl hover:bg-slate-900 transition shadow-sm">
-                            <i class="ph-bold ph-users-three text-sm"></i>
-                            Ajukan Karyawan (Multi-Peserta)
+                    <!-- Action Buttons: Detail & Ajukan Karyawan -->
+                    <div class="grid grid-cols-3 gap-2">
+                        <a href="{{ route('department.trainings.show', $training->id) }}"
+                           class="col-span-1 inline-flex items-center justify-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-3 rounded-xl transition">
+                            <i class="ph-bold ph-eye text-sm"></i> Detail
                         </a>
-                    @else
-                        <button type="button" disabled
-                                class="w-full inline-flex items-center justify-center gap-2 bg-slate-100 text-slate-400 font-bold text-xs py-3 rounded-xl cursor-not-allowed">
-                            Kuota Penuh
-                        </button>
-                    @endif
+                        @if($remainingQuota > 0)
+                            <a href="{{ route('department.trainings.request', $training->id) }}"
+                               class="col-span-2 inline-flex items-center justify-center gap-1.5 bg-slate-800 text-white font-bold text-xs py-3 rounded-xl hover:bg-slate-900 transition shadow-sm">
+                                <i class="ph-bold ph-users-three text-sm"></i>
+                                Ajukan Karyawan
+                            </a>
+                        @else
+                            <button type="button" disabled
+                                    class="col-span-2 inline-flex items-center justify-center gap-1.5 bg-slate-100 text-slate-400 font-bold text-xs py-3 rounded-xl cursor-not-allowed">
+                                Kuota Penuh
+                            </button>
+                        @endif
+                    </div>
                 </div>
             @empty
                 <div class="col-span-full p-12 bg-white rounded-2xl border border-slate-100 text-center space-y-3">

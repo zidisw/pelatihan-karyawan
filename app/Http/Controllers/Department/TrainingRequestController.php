@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Department;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Training;
 use App\Models\TrainingParticipant;
@@ -309,6 +310,86 @@ class TrainingRequestController extends Controller
         $requests = $query->latest()->paginate(10)->withQueryString();
 
         return view('department.trainings.history', compact('requests'));
+    }
+
+    /**
+     * Menampilkan halaman Detail Katalog Pelatihan untuk User Departemen (PRD 7.4.D & 8.2).
+     */
+    public function show(Training $training)
+    {
+        $user = auth()->user();
+        $validStatuses = ['disetujui', 'terjadwal', 'sedang_pelatihan', 'selesai', 'lulus'];
+
+        $training->load(['documents']);
+        $training->loadCount([
+            'participants as approved_participants_count' => function ($q) use ($validStatuses) {
+                $q->whereIn('status_peserta', $validStatuses);
+            },
+        ]);
+
+        // Ambil nama target departemen jika diatur
+        $targetDepartmentNames = [];
+        if (is_array($training->target_departemen) && !empty($training->target_departemen)) {
+            $targetDepartmentNames = Department::whereIn('id', $training->target_departemen)
+                ->pluck('nama_departemen')
+                ->toArray();
+        }
+
+        // Daftar karyawan dari departemen user ini yang sudah terdaftar di pelatihan ini
+        $departmentParticipants = TrainingParticipant::with('employee')
+            ->where('training_id', $training->id)
+            ->when($user->department_id, function ($q) use ($user) {
+                $q->whereHas('employee', fn($eq) => $eq->where('department_id', $user->department_id));
+            })
+            ->whereNotIn('status_peserta', ['dibatalkan'])
+            ->get();
+
+        // Daftar pengajuan dari departemen user ini untuk pelatihan ini
+        $departmentRequests = TrainingRequest::with(['participants.employee', 'employee'])
+            ->where('training_id', $training->id)
+            ->where(function ($q) use ($user) {
+                $q->where('diajukan_oleh', $user->id);
+                if ($user->department_id) {
+                    $q->orWhere('department_id', $user->department_id);
+                }
+            })
+            ->latest()
+            ->get();
+
+        return view('department.trainings.show', compact(
+            'training',
+            'targetDepartmentNames',
+            'departmentParticipants',
+            'departmentRequests'
+        ));
+    }
+
+    /**
+     * Membatalkan pengajuan pelatihan yang masih berstatus Menunggu Review / Pending (PRD 8.3).
+     */
+    public function cancel(TrainingRequest $trainingRequest)
+    {
+        $user = auth()->user();
+
+        // Pastikan pengajuan ini milik user atau departemennya
+        $isOwner = ($trainingRequest->diajukan_oleh === $user->id)
+            || ($user->department_id && $trainingRequest->department_id === $user->department_id);
+
+        if (!$isOwner) {
+            abort(403, 'Akses ditolak. Anda tidak berhak membatalkan pengajuan dari departemen lain.');
+        }
+
+        if (!in_array($trainingRequest->status, ['menunggu_review', 'pending'])) {
+            return redirect()->back()
+                ->with('error', 'Pengajuan ini sudah diproses oleh Admin HRGA sehingga tidak dapat dibatalkan.');
+        }
+
+        $trainingRequest->update([
+            'status' => 'cancelled',
+        ]);
+
+        return redirect()->back()
+            ->with('success', "Pengajuan pelatihan {$trainingRequest->nomor_request} berhasil dibatalkan.");
     }
 
     /**

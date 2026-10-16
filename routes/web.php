@@ -95,11 +95,13 @@ Route::middleware(['auth', 'role:departemen'])->group(function () {
     Route::get('/department/trainings', [DepartmentTrainingRequestController::class, 'index'])->name('department.trainings.index');
     Route::get('/department/requests/new', [DepartmentTrainingRequestController::class, 'createNew'])->name('department.requests.createNew');
     Route::post('/department/requests/new', [DepartmentTrainingRequestController::class, 'storeNew'])->name('department.requests.storeNew');
+    Route::get('/department/trainings/{training}', [DepartmentTrainingRequestController::class, 'show'])->name('department.trainings.show');
     Route::get('/department/trainings/{training}/request', [DepartmentTrainingRequestController::class, 'create'])->name('department.trainings.request');
     Route::post('/department/trainings/{training}/request', [DepartmentTrainingRequestController::class, 'store'])->name('department.trainings.store');
 
-    // Rute Riwayat Pengajuan
+    // Rute Riwayat Pengajuan & Pembatalan Pengajuan
     Route::get('/department/history', [DepartmentTrainingRequestController::class, 'history'])->name('department.trainings.history');
+    Route::patch('/department/requests/{trainingRequest}/cancel', [DepartmentTrainingRequestController::class, 'cancel'])->name('department.requests.cancel');
 
     // Rute Read-Only Data Karyawan & Sertifikat Departemen Sendiri
     Route::get('/department/employees', [DepartmentEmployeeController::class, 'index'])->name('department.employees.index');

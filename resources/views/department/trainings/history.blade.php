@@ -29,6 +29,13 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-sm font-bold flex items-center gap-2">
+                <i class="ph-fill ph-warning-circle text-lg"></i>
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
+
         <!-- Filter Bar -->
         <form method="GET" action="{{ route('department.trainings.history') }}" class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-wrap items-center gap-3">
             <select name="jenis_request" class="px-3.5 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50">
@@ -43,6 +50,7 @@
                 <option value="approved" @selected(request('status') === 'approved')>Disetujui Seluruhnya</option>
                 <option value="partially_approved" @selected(request('status') === 'partially_approved')>Disetujui Sebagian</option>
                 <option value="rejected" @selected(request('status') === 'rejected')>Ditolak</option>
+                <option value="cancelled" @selected(request('status') === 'cancelled')>Dibatalkan</option>
             </select>
 
             <button type="submit" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl transition">
@@ -61,12 +69,12 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-100">
-                            <th class="pb-3.5 px-4">No. Request & Tanggal</th>
+                            <th class="pb-3.5 px-4">No. Request & Waktu</th>
                             <th class="pb-3.5 px-4">Program / Scope Pelatihan</th>
                             <th class="pb-3.5 px-4">Peserta Diajukan</th>
                             <th class="pb-3.5 px-4 text-center">Status Pengajuan</th>
                             <th class="pb-3.5 px-4">Catatan HRGA</th>
-                            <th class="pb-3.5 px-4 text-center">Detail</th>
+                            <th class="pb-3.5 px-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -76,17 +84,22 @@
                                     'approved', 'disetujui' => ['label' => 'Disetujui', 'class' => 'bg-emerald-50 text-emerald-700 border-emerald-200'],
                                     'partially_approved' => ['label' => 'Disetujui Sebagian', 'class' => 'bg-blue-50 text-blue-700 border-blue-200'],
                                     'rejected', 'ditolak' => ['label' => 'Ditolak', 'class' => 'bg-rose-50 text-rose-700 border-rose-200'],
+                                    'cancelled' => ['label' => 'Dibatalkan', 'class' => 'bg-slate-100 text-slate-600 border-slate-200'],
                                     'pending' => ['label' => 'Pending / Revisi', 'class' => 'bg-amber-50 text-amber-700 border-amber-200'],
                                     default => ['label' => 'Menunggu Review', 'class' => 'bg-amber-50 text-amber-700 border-amber-200'],
                                 };
                                 $participants = $req->participants;
                                 $partCount = $participants->count() ?: ($req->employee ? 1 : 0);
+                                $canCancel = in_array($req->status, ['menunggu_review', 'pending']);
                             @endphp
                             <tr class="hover:bg-slate-50/70 transition-colors">
                                 <td class="py-4 px-4 align-top">
                                     <div class="text-xs font-extrabold text-slate-800">{{ $req->nomor_request ?? ('#REQ-' . $req->id) }}</div>
-                                    <div class="text-[11px] text-slate-400 font-medium mt-0.5">
-                                        {{ $req->created_at->format('d M Y, H:i') }}
+                                    <div class="text-[11px] text-slate-500 font-medium mt-0.5">
+                                        Diajukan: {{ $req->created_at->format('d M Y, H:i') }}
+                                    </div>
+                                    <div class="text-[10px] text-slate-400 font-medium mt-0.5">
+                                        Update: {{ ($req->reviewed_at ?? $req->updated_at)->format('d M Y, H:i') }}
                                     </div>
                                     @if($req->periode_pengajuan)
                                         <span class="inline-block mt-1 px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold">
@@ -156,10 +169,24 @@
                                     @endif
                                 </td>
                                 <td class="py-4 px-4 align-top text-center">
-                                    <button type="button" @click="detailModalId = {{ $req->id }}"
-                                            class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold transition inline-flex items-center gap-1">
-                                        <i class="ph-bold ph-eye"></i> Detail
-                                    </button>
+                                    <div class="inline-flex items-center gap-1.5">
+                                        <button type="button" @click="detailModalId = {{ $req->id }}"
+                                                class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 text-xs font-bold transition inline-flex items-center gap-1">
+                                            <i class="ph-bold ph-eye"></i> Detail
+                                        </button>
+
+                                        @if($canCancel)
+                                            <form action="{{ route('department.requests.cancel', $req->id) }}" method="POST"
+                                                  onsubmit="return confirm('Batalkan pengajuan pelatihan {{ $req->nomor_request }} ini?')">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit"
+                                                        class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold transition inline-flex items-center gap-1">
+                                                    <i class="ph-bold ph-x-circle"></i> Batalkan
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -194,6 +221,9 @@
                             <h3 class="text-lg font-extrabold text-slate-800 mt-2">
                                 {{ $req->training?->nama_pelatihan ?? $req->scope_program ?? 'Detail Pengajuan Pelatihan' }}
                             </h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">
+                                Diajukan: {{ $req->created_at->format('d M Y, H:i') }} • Update Terakhir: {{ ($req->reviewed_at ?? $req->updated_at)->format('d M Y, H:i') }}
+                            </p>
                         </div>
                         <button type="button" @click="detailModalId = null" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500">
                             <i class="ph-bold ph-x"></i>
@@ -257,6 +287,21 @@
                         <div class="p-3.5 bg-amber-50/70 border border-amber-200 rounded-xl text-xs">
                             <span class="text-[10px] font-extrabold text-amber-700 uppercase block">Catatan Admin HRGA:</span>
                             <p class="font-semibold text-amber-900 mt-0.5">{{ $req->catatan_admin }}</p>
+                        </div>
+                    @endif
+
+                    @if(in_array($req->status, ['menunggu_review', 'pending']))
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <span class="text-xs text-slate-400">Pengajuan masih menunggu keputusan HRGA dan dapat dibatalkan.</span>
+                            <form action="{{ route('department.requests.cancel', $req->id) }}" method="POST"
+                                  onsubmit="return confirm('Batalkan pengajuan pelatihan {{ $req->nomor_request }} ini?')">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit"
+                                        class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition inline-flex items-center gap-1.5">
+                                    <i class="ph-bold ph-x-circle"></i> Batalkan Pengajuan Ini
+                                </button>
+                            </form>
                         </div>
                     @endif
                 </div>
