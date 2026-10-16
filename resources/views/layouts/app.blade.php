@@ -162,10 +162,91 @@
             </div>
 
             <div class="flex items-center gap-5 shrink-0 ml-4">
-                <button class="relative text-slate-400 hover:text-slate-600 transition-colors p-2.5 rounded-full hover:bg-slate-100">
-                    <i class="ph ph-bell text-2xl"></i>
-                    <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
+                @auth
+                    @php
+                        $headerNotifications = \App\Models\Notification::where('user_id', Auth::id())
+                            ->latest()
+                            ->take(10)
+                            ->get();
+                        $unreadNotificationsCount = \App\Models\Notification::where('user_id', Auth::id())
+                            ->where('is_read', false)
+                            ->count();
+                    @endphp
+                    <div class="relative" id="notificationDropdownWrapper">
+                        <button type="button"
+                                id="notificationBellBtn"
+                                onclick="toggleNotificationDropdown()"
+                                class="relative text-slate-500 hover:text-primary-600 transition-colors p-2.5 rounded-full hover:bg-slate-100"
+                                title="Notifikasi Sistem">
+                            <i class="ph ph-bell text-2xl"></i>
+                            @if($unreadNotificationsCount > 0)
+                                <span class="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 bg-rose-500 text-white text-[10px] font-extrabold rounded-full border-2 border-white flex items-center justify-center">
+                                    {{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}
+                                </span>
+                            @endif
+                        </button>
+
+                        <!-- Dropdown Panel Notifikasi In-App (PRD Bab 12) -->
+                        <div id="notificationDropdownPanel"
+                             class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden">
+                            <div class="px-4 py-3.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Notifikasi</h3>
+                                    @if($unreadNotificationsCount > 0)
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-700">
+                                            {{ $unreadNotificationsCount }} Baru
+                                        </span>
+                                    @endif
+                                </div>
+
+                                @if($unreadNotificationsCount > 0)
+                                    <form action="{{ route('notifications.readAll') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <button type="submit" class="text-[11px] font-bold text-primary-600 hover:underline">
+                                            Tandai Semua Dibaca
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+
+                            <div class="max-h-80 overflow-y-auto divide-y divide-slate-50">
+                                @forelse($headerNotifications as $notif)
+                                    <div class="p-3.5 hover:bg-slate-50/80 transition-colors {{ !$notif->is_read ? 'bg-blue-50/40' : '' }}">
+                                        <div class="flex items-start justify-between gap-2">
+                                            <div class="flex items-start gap-2.5 min-w-0">
+                                                <span class="mt-1 w-2 h-2 rounded-full shrink-0 {{ !$notif->is_read ? 'bg-primary-600' : 'bg-slate-300' }}"></span>
+                                                <div class="min-w-0">
+                                                    <p class="text-xs font-extrabold text-slate-800 leading-snug">{{ $notif->judul }}</p>
+                                                    <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">{{ $notif->pesan }}</p>
+                                                    <span class="text-[10px] font-semibold text-slate-400 mt-1 block">
+                                                        {{ $notif->created_at?->diffForHumans() }}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            @if(!$notif->is_read)
+                                                <form action="{{ route('notifications.read', $notif->id) }}" method="POST" class="shrink-0 m-0">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                            title="Tandai sudah dibaca"
+                                                            class="px-2 py-1 rounded-lg bg-white border border-slate-200 text-[10px] font-bold text-slate-600 hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-colors">
+                                                        Baca
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="py-8 px-4 text-center text-slate-400 text-xs">
+                                        <i class="ph-fill ph-bell-slash text-2xl text-slate-300 mb-1.5 block"></i>
+                                        Belum ada notifikasi terbaru.
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                @endauth
 
                 <div class="h-8 w-px bg-slate-200 mx-1 hidden sm:block"></div>
 
@@ -193,7 +274,7 @@
 
     </main>
 
-    <!-- SCRIPT SIDEBAR MOBILE -->
+    <!-- SCRIPT SIDEBAR MOBILE & DROPDOWN NOTIFIKASI -->
     <script>
         const sidebar = document.getElementById('sidebar');
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -219,6 +300,21 @@
 
         if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar);
         if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+        function toggleNotificationDropdown() {
+            const panel = document.getElementById('notificationDropdownPanel');
+            if (panel) {
+                panel.classList.toggle('hidden');
+            }
+        }
+
+        document.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('notificationDropdownWrapper');
+            const panel = document.getElementById('notificationDropdownPanel');
+            if (wrapper && panel && !wrapper.contains(e.target)) {
+                panel.classList.add('hidden');
+            }
+        });
     </script>
 </body>
 </html>

@@ -3,11 +3,14 @@
 use App\Http\Controllers\Department\DashboardController as DepartmentDashboardController;
 use App\Http\Controllers\Department\EmployeeController as DepartmentEmployeeController;
 use App\Http\Controllers\Department\TrainingRequestController as DepartmentTrainingRequestController;
+use App\Http\Controllers\HRD\CertificationController;
 use App\Http\Controllers\HRD\DashboardController as HrdDashboardController;
 use App\Http\Controllers\HRD\EmployeeController;
+use App\Http\Controllers\HRD\ExportController;
 use App\Http\Controllers\HRD\TrainingController;
 use App\Http\Controllers\HRD\TrainingParticipantController;
 use App\Http\Controllers\HRD\TrainingRequestController as HrdTrainingRequestController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Superadmin\DashboardController as SuperadminDashboardController;
 use App\Http\Controllers\Superadmin\DepartmentController as SuperadminDepartmentController;
@@ -66,6 +69,11 @@ Route::middleware(['auth', 'role:hrd'])->group(function () {
     Route::put('/hrd/employees/{employee}', [EmployeeController::class, 'update'])->name('hrd.employees.update');
     Route::delete('/hrd/employees/{employee}', [EmployeeController::class, 'destroy'])->name('hrd.employees.destroy');
 
+    // Rute CRUD Sertifikat Karyawan (Issue #8)
+    Route::post('/hrd/certifications', [CertificationController::class, 'store'])->name('hrd.certifications.store');
+    Route::put('/hrd/certifications/{certification}', [CertificationController::class, 'update'])->name('hrd.certifications.update');
+    Route::delete('/hrd/certifications/{certification}', [CertificationController::class, 'destroy'])->name('hrd.certifications.destroy');
+
     // Rute Katalog Pelatihan
     Route::get('/hrd/trainings', [TrainingController::class, 'index'])->name('hrd.trainings.index');
     Route::get('/hrd/trainings/create', [TrainingController::class, 'create'])->name('hrd.trainings.create');
@@ -81,13 +89,18 @@ Route::middleware(['auth', 'role:hrd'])->group(function () {
     Route::get('/hrd/requests', [HrdTrainingRequestController::class, 'index'])->name('hrd.requests.index');
     Route::patch('/hrd/requests/{trainingRequest}/process', [HrdTrainingRequestController::class, 'process'])->name('hrd.requests.process');
 
-    // Rute Riwayat Pelatihan (Manajemen Peserta Pelatihan)
+    // Rute Riwayat Pelatihan & Realisasi (Manajemen Peserta Pelatihan - Issue #9)
     Route::get('/hrd/participants', [TrainingParticipantController::class, 'index'])->name('hrd.participants.index');
     Route::patch('/hrd/participants/{participant}/status', [TrainingParticipantController::class, 'updateStatus'])->name('hrd.participants.updateStatus');
+
+    // Rute Ekspor Laporan CSV/Excel & Cetak PDF (Issue #10)
+    Route::get('/hrd/export/employees', [ExportController::class, 'employees'])->name('hrd.export.employees');
+    Route::get('/hrd/export/participants', [ExportController::class, 'participants'])->name('hrd.export.participants');
+    Route::get('/hrd/export/requests', [ExportController::class, 'requests'])->name('hrd.export.requests');
 });
 
 // 4. Rute Khusus User Portal (Admin Departemen)
-Route::middleware(['auth', 'role:departemen'])->group(function () {
+Route::middleware(['auth', 'role:departemen,department'])->group(function () {
     Route::get('/department/dashboard', [DepartmentDashboardController::class, 'index'])->name('department.dashboard');
     Route::get('/departemen/dashboard', fn() => redirect()->route('department.dashboard'));
 
@@ -108,11 +121,18 @@ Route::middleware(['auth', 'role:departemen'])->group(function () {
     Route::get('/department/employees/{employee}', [DepartmentEmployeeController::class, 'show'])->name('department.employees.show');
 });
 
-// 5. Rute Profil
+// 5. Rute Terautentikasi Lintas Role (Profil, Notifikasi In-App, & Unduh Sertifikat Aman)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Kontrol Akses Lihat / Unduh Sertifikat Aman (PRD Bab 14)
+    Route::get('/certifications/{certification}/download', [CertificationController::class, 'download'])->name('certifications.download');
+
+    // Notifikasi In-App (PRD Bab 12)
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 });
 
 // 6. Rute Autentikasi

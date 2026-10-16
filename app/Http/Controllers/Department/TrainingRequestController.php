@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Department;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\Notification;
 use App\Models\Training;
 use App\Models\TrainingParticipant;
 use App\Models\TrainingRequest;
 use App\Models\TrainingRequestParticipant;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -147,10 +150,11 @@ class TrainingRequestController extends Controller
         }
 
         // 5. Simpan Header Pengajuan & Daftar Peserta dalam Database Transaction
-        DB::transaction(function () use ($user, $training, $employees, $validated) {
+        $createdRequest = null;
+        DB::transaction(function () use ($user, $training, $employees, $validated, &$createdRequest) {
             $firstEmployee = $employees->first();
 
-            $trainingRequest = TrainingRequest::create([
+            $createdRequest = TrainingRequest::create([
                 'nomor_request' => TrainingRequest::generateNomorRequest(),
                 'department_id' => $user->department_id ?? $firstEmployee->department_id,
                 'employee_id' => $firstEmployee->id,
@@ -166,7 +170,7 @@ class TrainingRequestController extends Controller
 
             foreach ($employees as $emp) {
                 TrainingRequestParticipant::create([
-                    'training_request_id' => $trainingRequest->id,
+                    'training_request_id' => $createdRequest->id,
                     'employee_id' => $emp->id,
                     'nama_peserta' => $emp->nama,
                     'jabatan_peserta' => $emp->jabatan,
@@ -174,6 +178,30 @@ class TrainingRequestController extends Controller
                 ]);
             }
         });
+
+        if ($createdRequest) {
+            AuditLog::record(
+                'TrainingRequest',
+                $createdRequest->id,
+                'CREATE_KATALOG',
+                null,
+                $createdRequest->toArray(),
+                "Pengajuan katalog {$createdRequest->nomor_request} untuk " . count($employeeIds) . " karyawan"
+            );
+
+            $hrdUserIds = User::where('role', 'hrd')->pluck('id');
+            foreach ($hrdUserIds as $hrdId) {
+                Notification::create([
+                    'user_id' => $hrdId,
+                    'judul' => "Pengajuan Pelatihan Baru ({$createdRequest->nomor_request})",
+                    'pesan' => "{$user->name} mengajukan " . count($employeeIds) . " peserta untuk program katalog \"{$training->nama_pelatihan}\".",
+                    'jenis' => 'info',
+                    'reference_type' => 'TrainingRequest',
+                    'reference_id' => $createdRequest->id,
+                    'is_read' => false,
+                ]);
+            }
+        }
 
         return redirect()->route('department.trainings.history')
             ->with('success', 'Pengajuan pelatihan untuk ' . count($employeeIds) . ' karyawan berhasil dikirim ke Admin HRGA!');
@@ -239,10 +267,11 @@ class TrainingRequestController extends Controller
                 ->with('error', 'Terdapat peserta yang tidak valid atau berasal dari luar departemen Anda.');
         }
 
-        DB::transaction(function () use ($user, $employees, $validated) {
+        $createdRequest = null;
+        DB::transaction(function () use ($user, $employees, $validated, &$createdRequest) {
             $firstEmployee = $employees->first();
 
-            $trainingRequest = TrainingRequest::create([
+            $createdRequest = TrainingRequest::create([
                 'nomor_request' => TrainingRequest::generateNomorRequest(),
                 'department_id' => $user->department_id ?? $firstEmployee->department_id,
                 'employee_id' => $firstEmployee->id,
@@ -262,7 +291,7 @@ class TrainingRequestController extends Controller
 
             foreach ($employees as $emp) {
                 TrainingRequestParticipant::create([
-                    'training_request_id' => $trainingRequest->id,
+                    'training_request_id' => $createdRequest->id,
                     'employee_id' => $emp->id,
                     'nama_peserta' => $emp->nama,
                     'jabatan_peserta' => $emp->jabatan,
@@ -270,6 +299,30 @@ class TrainingRequestController extends Controller
                 ]);
             }
         });
+
+        if ($createdRequest) {
+            AuditLog::record(
+                'TrainingRequest',
+                $createdRequest->id,
+                'CREATE_TRAINING_BARU',
+                null,
+                $createdRequest->toArray(),
+                "Usulan Training Baru {$createdRequest->nomor_request} ({$validated['scope_program']}) untuk " . count($employeeIds) . " peserta"
+            );
+
+            $hrdUserIds = User::where('role', 'hrd')->pluck('id');
+            foreach ($hrdUserIds as $hrdId) {
+                Notification::create([
+                    'user_id' => $hrdId,
+                    'judul' => "Usulan Training Baru ({$createdRequest->nomor_request})",
+                    'pesan' => "{$user->name} mengusulkan program baru \"{$validated['scope_program']}\" untuk " . count($employeeIds) . " peserta.",
+                    'jenis' => 'info',
+                    'reference_type' => 'TrainingRequest',
+                    'reference_id' => $createdRequest->id,
+                    'is_read' => false,
+                ]);
+            }
+        }
 
         return redirect()->route('department.trainings.history')
             ->with('success', 'Usulan Request Training Baru (' . $validated['scope_program'] . ') untuk ' . count($employeeIds) . ' peserta berhasil dikirim ke Admin HRGA!');

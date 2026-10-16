@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\HRD;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Training;
@@ -167,7 +168,16 @@ class EmployeeController extends Controller
             'tanggal_join' => 'nullable|date',
         ]);
 
-        Employee::create($validated);
+        $employee = Employee::create($validated);
+
+        AuditLog::record(
+            'Employee',
+            $employee->id,
+            'CREATE',
+            null,
+            $employee->toArray(),
+            "Menambahkan data karyawan baru: {$employee->nama} ({$employee->nik})"
+        );
 
         return redirect()->route('hrd.employees.index')->with('success', 'Data karyawan berhasil ditambahkan!');
     }
@@ -195,7 +205,17 @@ class EmployeeController extends Controller
             'tanggal_join' => 'nullable|date',
         ]);
 
+        $oldData = $employee->toArray();
         $employee->update($validated);
+
+        AuditLog::record(
+            'Employee',
+            $employee->id,
+            'UPDATE',
+            $oldData,
+            $employee->fresh()->toArray(),
+            "Memperbarui data karyawan: {$employee->nama} ({$employee->nik})"
+        );
 
         return redirect()->route('hrd.employees.index')->with('success', 'Data karyawan berhasil diperbarui!');
     }
@@ -233,8 +253,9 @@ class EmployeeController extends Controller
         $inProgressTrainings = $employee->trainingParticipants->whereIn('status_peserta', ['sedang_pelatihan', 'terjadwal', 'disetujui'])->count();
         $pendingRequests = $allRequests->whereIn('status', ['pending', 'menunggu_review'])->count();
 
-        // Pelatihan yang sedang dibuka jika ingin mendaftarkan langsung
+        // Pelatihan yang sedang dibuka jika ingin mendaftarkan langsung & seluruh pelatihan untuk tautan sertifikat
         $availableTrainings = Training::where('status_pendaftaran', 'dibuka')->get();
+        $allTrainings = Training::orderBy('nama_pelatihan')->get();
 
         return view('hrd.employees.show', compact(
             'employee',
@@ -243,13 +264,29 @@ class EmployeeController extends Controller
             'completedTrainings',
             'inProgressTrainings',
             'pendingRequests',
-            'availableTrainings'
+            'availableTrainings',
+            'allTrainings'
         ));
     }
 
     public function destroy(Employee $employee)
     {
+        $oldData = $employee->toArray();
+        $nama = $employee->nama;
+        $nik = $employee->nik;
+        $empId = $employee->id;
+
         $employee->delete();
+
+        AuditLog::record(
+            'Employee',
+            $empId,
+            'DELETE',
+            $oldData,
+            null,
+            "Menghapus data karyawan: {$nama} ({$nik})"
+        );
+
         return redirect()->route('hrd.employees.index')->with('success', 'Data karyawan berhasil dihapus!');
     }
 }

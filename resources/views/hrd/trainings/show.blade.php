@@ -231,57 +231,87 @@
                     @endif
                 </div>
 
-                <!-- Card Peserta Terdaftar -->
+                <!-- Card Peserta Terdaftar & Realisasi Pelatihan (PRD 9.3 & BR-09) -->
                 <div class="bg-surface rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
                     <div class="flex items-center justify-between mb-5 pb-4 border-b border-slate-100">
                         <div>
-                            <h3 class="text-lg font-bold text-slate-800">Daftar Peserta Terdaftar</h3>
-                            <p class="text-xs text-slate-400 mt-0.5">Karyawan yang terdaftar mengikuti sesi pelatihan ini</p>
+                            <h3 class="text-lg font-bold text-slate-800">Daftar Peserta & Realisasi Pelatihan</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Catat kehadiran aktual, status penyelesaian, dan evaluasi peserta</p>
                         </div>
                         <span class="px-3 py-1 rounded-full text-xs font-bold bg-primary-50 text-primary-700">
-                            {{ $training->employees->count() }} Peserta
+                            {{ $training->participants->count() }} Peserta
                         </span>
                     </div>
 
-                    @if ($training->employees->count() > 0)
+                    @if ($training->participants->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
                                 <thead>
                                     <tr class="text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
                                         <th class="pb-3 px-3">Nama Karyawan & NIK</th>
                                         <th class="pb-3 px-3">Departemen</th>
-                                        <th class="pb-3 px-3">Status Peserta</th>
-                                        <th class="pb-3 px-3 text-right">Aksi</th>
+                                        <th class="pb-3 px-3">Status & Kehadiran</th>
+                                        <th class="pb-3 px-3 text-right">Update Realisasi (BR-09)</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-50">
-                                    @foreach ($training->employees as $peserta)
+                                    @foreach ($training->participants as $part)
                                         @php
-                                            $pStatus = $peserta->pivot->status_peserta ?? 'disetujui';
+                                            $peserta = $part->employee;
+                                            $pStatus = $part->status_peserta ?? 'disetujui';
+                                            $pHadir = $part->kehadiran ?? 'belum_dicatat';
                                         @endphp
                                         <tr class="hover:bg-slate-50/70 transition-colors">
                                             <td class="py-3 px-3">
-                                                <a href="{{ route('hrd.employees.show', $peserta->id) }}" class="font-bold text-slate-800 hover:text-primary-600 transition-colors">
-                                                    {{ $peserta->nama }}
-                                                </a>
-                                                <div class="text-[11px] text-slate-400">NIK: {{ $peserta->nik }}</div>
+                                                @if($peserta)
+                                                    <a href="{{ route('hrd.employees.show', $peserta->id) }}" class="font-bold text-slate-800 hover:text-primary-600 transition-colors">
+                                                        {{ $peserta->nama }}
+                                                    </a>
+                                                    <div class="text-[11px] text-slate-400">NIK: {{ $peserta->nik }}</div>
+                                                @else
+                                                    <span class="font-bold text-slate-800">Peserta</span>
+                                                @endif
                                             </td>
                                             <td class="py-3 px-3 font-semibold text-slate-600">
-                                                {{ $peserta->department->nama_departemen ?? '-' }}
+                                                {{ $peserta?->department?->nama_departemen ?? '-' }}
                                             </td>
                                             <td class="py-3 px-3">
-                                                <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase
-                                                    @if(in_array($pStatus, ['selesai', 'lulus'])) bg-emerald-50 text-emerald-700 border border-emerald-200
-                                                    @elseif(in_array($pStatus, ['sedang_pelatihan', 'terjadwal'])) bg-amber-50 text-amber-700 border border-amber-200
-                                                    @elseif($pStatus === 'disetujui') bg-blue-50 text-blue-700 border border-blue-200
-                                                    @else bg-slate-100 text-slate-600 border border-slate-200 @endif">
-                                                    {{ str_replace('_', ' ', $pStatus) }}
-                                                </span>
+                                                <div class="flex flex-col gap-1">
+                                                    <span class="inline-flex self-start px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase
+                                                        @if(in_array($pStatus, ['selesai', 'lulus'])) bg-emerald-50 text-emerald-700 border border-emerald-200
+                                                        @elseif(in_array($pStatus, ['sedang_pelatihan', 'terjadwal'])) bg-amber-50 text-amber-700 border border-amber-200
+                                                        @elseif($pStatus === 'disetujui') bg-blue-50 text-blue-700 border border-blue-200
+                                                        @else bg-rose-50 text-rose-700 border border-rose-200 @endif">
+                                                        {{ str_replace('_', ' ', $pStatus) }}
+                                                    </span>
+                                                    <span class="text-[10px] text-slate-500">
+                                                        Kehadiran: <strong>{{ strtoupper(str_replace('_', ' ', $pHadir)) }}</strong>
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td class="py-3 px-3 text-right">
-                                                <a href="{{ route('hrd.employees.show', $peserta->id) }}" class="inline-flex items-center text-xs font-bold text-primary-600 hover:underline">
-                                                    Profil &rarr;
-                                                </a>
+                                                <form action="{{ route('hrd.participants.updateStatus', $part->id) }}" method="POST" class="inline-flex flex-wrap items-center justify-end gap-1.5 m-0">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <select name="kehadiran" class="px-2 py-1 rounded-lg border border-slate-200 text-[11px] font-semibold bg-white text-slate-700">
+                                                        <option value="belum_dicatat" {{ $pHadir === 'belum_dicatat' ? 'selected' : '' }}>Belum Dicatat</option>
+                                                        <option value="hadir" {{ $pHadir === 'hadir' ? 'selected' : '' }}>Hadir</option>
+                                                        <option value="izin" {{ $pHadir === 'izin' ? 'selected' : '' }}>Izin</option>
+                                                        <option value="tidak_hadir" {{ $pHadir === 'tidak_hadir' ? 'selected' : '' }}>Tidak Hadir</option>
+                                                    </select>
+                                                    <select name="status_peserta" class="px-2 py-1 rounded-lg border border-slate-200 text-[11px] font-semibold bg-white text-slate-700">
+                                                        <option value="disetujui" {{ $pStatus === 'disetujui' ? 'selected' : '' }}>Disetujui</option>
+                                                        <option value="sedang_pelatihan" {{ $pStatus === 'sedang_pelatihan' ? 'selected' : '' }}>Berjalan</option>
+                                                        <option value="selesai" {{ in_array($pStatus, ['selesai', 'lulus']) ? 'selected' : '' }}>Selesai</option>
+                                                        <option value="tidak_hadir" {{ $pStatus === 'tidak_hadir' ? 'selected' : '' }}>Tidak Hadir</option>
+                                                    </select>
+                                                    <input type="text" name="hasil_evaluasi" value="{{ $part->hasil_evaluasi }}"
+                                                           placeholder="Evaluasi..."
+                                                           class="px-2 py-1 rounded-lg border border-slate-200 text-[11px] font-semibold bg-white text-slate-700 w-28">
+                                                    <button type="submit" class="px-2.5 py-1 rounded-lg bg-slate-800 text-white font-bold text-[11px] hover:bg-slate-700">
+                                                        Simpan
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach

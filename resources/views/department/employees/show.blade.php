@@ -205,12 +205,18 @@
                 <h3 class="text-lg font-bold text-slate-800 mb-5 pb-3 border-b border-slate-100">Daftar Sertifikat Resmi Karyawan</h3>
                 <div class="space-y-3">
                     @forelse($employee->certifications as $cert)
-                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-4 text-xs">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
                             <div>
                                 <h4 class="font-bold text-slate-800 text-sm">{{ $cert->nama_sertifikasi }}</h4>
-                                <p class="text-slate-400 mt-0.5">No: {{ $cert->nomor_sertifikat ?? '-' }} &bull; Jenis: {{ $cert->jenis_sertifikasi ?? 'Umum' }}</p>
+                                <p class="text-slate-400 mt-0.5">
+                                    No: {{ $cert->nomor_sertifikat ?? '-' }}
+                                    &bull; Jenis: {{ $cert->jenis_sertifikasi ?? 'Umum' }}
+                                    @if($cert->tanggal_terbit)
+                                        &bull; Terbit: {{ \Carbon\Carbon::parse($cert->tanggal_terbit)->format('d M Y') }}
+                                    @endif
+                                </p>
                             </div>
-                            <div class="text-right">
+                            <div class="flex flex-wrap items-center gap-2.5 sm:justify-end">
                                 @if($cert->tanggal_expired && !$cert->is_permanent)
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-bold {{ \Carbon\Carbon::parse($cert->tanggal_expired)->isPast() ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700' }}">
                                         Exp: {{ \Carbon\Carbon::parse($cert->tanggal_expired)->format('d M Y') }}
@@ -218,6 +224,13 @@
                                 @else
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-100 text-teal-700">Permanen</span>
                                 @endif
+
+                                <a href="{{ route('certifications.download', ['certification' => $cert->id, 'inline' => 1]) }}"
+                                   target="_blank"
+                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary-50 text-primary-600 hover:bg-primary-600 hover:text-white font-bold text-[11px] border border-primary-100 transition-colors">
+                                    <i class="ph-bold ph-file-arrow-down text-sm"></i>
+                                    Lihat / Unduh Sertifikat
+                                </a>
                             </div>
                         </div>
                     @empty

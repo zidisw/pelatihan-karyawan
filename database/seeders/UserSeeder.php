@@ -21,15 +21,13 @@ class UserSeeder extends Seeder
 
         $defaultPassword = Hash::make('password123');
 
-        DB::table('users')->insert([
+        $users = [
             [
                 'name' => 'Jordi',
                 'email' => 'superadmin@pelatihan.com',
                 'password' => $defaultPassword,
                 'role' => 'superadmin',
                 'department_id' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'name' => 'Admin HRGA',
@@ -37,8 +35,6 @@ class UserSeeder extends Seeder
                 'password' => $defaultPassword,
                 'role' => 'hrd',
                 'department_id' => $hrga?->id ?? 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'name' => 'Admin TC / IT',
@@ -46,8 +42,6 @@ class UserSeeder extends Seeder
                 'password' => $defaultPassword,
                 'role' => 'departemen',
                 'department_id' => $tc?->id ?? 2,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'name' => 'Admin Engineering (PLM)',
@@ -55,8 +49,6 @@ class UserSeeder extends Seeder
                 'password' => $defaultPassword,
                 'role' => 'departemen',
                 'department_id' => $plm?->id ?? 4,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'name' => 'Admin HSE',
@@ -64,9 +56,20 @@ class UserSeeder extends Seeder
                 'password' => $defaultPassword,
                 'role' => 'departemen',
                 'department_id' => $hse?->id ?? 8,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
-        ]);
+        ];
+
+        foreach ($users as $u) {
+            DB::table('users')->updateOrInsert(
+                ['email' => $u['email']],
+                [
+                    'name'          => $u['name'],
+                    'password'      => $u['password'],
+                    'role'          => $u['role'],
+                    'department_id' => $u['department_id'],
+                    'updated_at'    => now(),
+                ]
+            );
+        }
     }
 }

@@ -13,15 +13,25 @@ class DepartmentSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('departments')->insert([
-            ['nama_departemen' => 'HRGA', 'deskripsi' => 'Human Resources & General Affairs', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_departemen' => 'TC', 'deskripsi' => 'Training Center & Technical Control', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_departemen' => 'CIVIL', 'deskripsi' => 'Civil Engineering & Infrastructure', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_departemen' => 'PLM', 'deskripsi' => 'Plant Maintenance & Equipment', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_departemen' => 'MED', 'deskripsi' => 'Medical & Occupational Health', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_departemen' => 'LOGISTIK', 'deskripsi' => 'Logistics & Supply Chain Management', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_departemen' => 'MOD', 'deskripsi' => 'Mine Operation Department', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_departemen' => 'HSE', 'deskripsi' => 'Health, Safety, and Environment', 'created_at' => now(), 'updated_at' => now()],
-        ]);
+        $departments = [
+            ['nama_departemen' => 'HRGA', 'deskripsi' => 'Human Resources & General Affairs'],
+            ['nama_departemen' => 'TC', 'deskripsi' => 'Training Center & Technical Control'],
+            ['nama_departemen' => 'CIVIL', 'deskripsi' => 'Civil Engineering & Infrastructure'],
+            ['nama_departemen' => 'PLM', 'deskripsi' => 'Plant Maintenance & Equipment'],
+            ['nama_departemen' => 'MED', 'deskripsi' => 'Medical & Occupational Health'],
+            ['nama_departemen' => 'LOGISTIK', 'deskripsi' => 'Logistics & Supply Chain Management'],
+            ['nama_departemen' => 'MOD', 'deskripsi' => 'Mine Operation Department'],
+            ['nama_departemen' => 'HSE', 'deskripsi' => 'Health, Safety, and Environment'],
+        ];
+
+        foreach ($departments as $dept) {
+            DB::table('departments')->updateOrInsert(
+                ['nama_departemen' => $dept['nama_departemen']],
+                [
+                    'deskripsi'  => $dept['deskripsi'],
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 }

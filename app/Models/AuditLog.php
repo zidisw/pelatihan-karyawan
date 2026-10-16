@@ -32,4 +32,27 @@ class AuditLog extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Mencatat jejak audit (Audit Trail) perubahan data penting (PRD Bab 14 & BR-12).
+     */
+    public static function record(
+        string $entitas,
+        int $entitasId,
+        string $tindakan,
+        ?array $perubahanLama = null,
+        ?array $perubahanBaru = null,
+        ?string $catatan = null
+    ): self {
+        return self::create([
+            'user_id' => auth()->id(),
+            'entitas' => $entitas,
+            'entitas_id' => $entitasId,
+            'tindakan' => $tindakan,
+            'perubahan_lama' => $perubahanLama,
+            'perubahan_baru' => $perubahanBaru,
+            'catatan' => $catatan,
+            'ip_address' => request()?->ip(),
+        ]);
+    }
 }

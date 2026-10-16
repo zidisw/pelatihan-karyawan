@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\HRD;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\Department;
+use App\Models\Notification;
 use App\Models\Training;
 use App\Models\TrainingParticipant;
 use App\Models\TrainingRequest;
 use App\Models\TrainingRequestParticipant;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -315,6 +318,54 @@ class TrainingRequestController extends Controller
             'pending' => 'Ditunda (Pending)',
             default => ucfirst($finalStatus),
         };
+
+        // Catat Audit Trail keputusan review pengajuan (PRD Bab 14 & BR-12)
+        AuditLog::record(
+            'TrainingRequest',
+            $trainingRequest->id,
+            'REVIEW_DECISION',
+            null,
+            [
+                'nomor_request' => $trainingRequest->nomor_request,
+                'status' => $finalStatus,
+                'catatan_admin' => $catatanAdmin,
+                'participant_decisions' => $participantDecisions,
+            ],
+            "Review pengajuan {$trainingRequest->nomor_request}: {$statusLabel}"
+        );
+
+        // Kirim Notifikasi In-App ke User Departemen pengaju (PRD Bab 12)
+        $recipientIds = [];
+        if ($trainingRequest->diajukan_oleh) {
+            $recipientIds[] = (int) $trainingRequest->diajukan_oleh;
+        }
+        if ($trainingRequest->department_id) {
+            $deptUserIds = User::where('role', 'departemen')
+                ->where('department_id', $trainingRequest->department_id)
+                ->pluck('id')
+                ->map(fn($id) => (int) $id)
+                ->toArray();
+            $recipientIds = array_values(array_unique(array_merge($recipientIds, $deptUserIds)));
+        }
+
+        $judulProgram = $trainingRequest->training?->nama_pelatihan ?? $trainingRequest->scope_program ?? 'Pelatihan';
+        $notifJenis = match ($finalStatus) {
+            'approved', 'partially_approved' => 'success',
+            'rejected' => 'danger',
+            default => 'warning',
+        };
+
+        foreach ($recipientIds as $uid) {
+            Notification::create([
+                'user_id' => $uid,
+                'judul' => "Keputusan Pengajuan {$trainingRequest->nomor_request}: {$statusLabel}",
+                'pesan' => "Pengajuan pelatihan \"{$judulProgram}\" telah ditinjau oleh Admin HRGA dengan keputusan: {$statusLabel}." . ($catatanAdmin ? " Catatan: {$catatanAdmin}" : ''),
+                'jenis' => $notifJenis,
+                'reference_type' => 'TrainingRequest',
+                'reference_id' => $trainingRequest->id,
+                'is_read' => false,
+            ]);
+        }
 
         return redirect()->route('hrd.requests.index')
             ->with('success', "Keputusan pengajuan {$trainingRequest->nomor_request} berhasil disimpan dengan status: {$statusLabel}!");

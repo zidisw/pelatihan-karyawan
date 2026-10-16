@@ -2,11 +2,24 @@
     <x-slot name="header">Persetujuan Pengajuan Pelatihan</x-slot>
 
     <div class="w-full space-y-6" x-data="{ activeModalId: null }">
-        <!-- Page Title -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Page Title & Export Buttons (Issue #10) -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
                 <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Persetujuan & Review Request Training</h2>
                 <p class="text-xs text-slate-500 mt-1 font-medium">Tinjau pengajuan pelatihan katalog maupun usulan training baru, serta berikan keputusan keseluruhan atau per peserta (Disetujui Sebagian).</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+                <a href="{{ route('hrd.export.requests', array_merge(request()->query(), ['format' => 'csv'])) }}"
+                   class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-xs hover:bg-emerald-600 hover:text-white transition-all">
+                    <i class="ph-bold ph-file-csv text-base"></i> Export Excel / CSV
+                </a>
+
+                <a href="{{ route('hrd.export.requests', array_merge(request()->query(), ['format' => 'print'])) }}"
+                   target="_blank"
+                   class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-800 text-white font-bold text-xs hover:bg-slate-700 transition-all">
+                    <i class="ph-bold ph-printer text-base"></i> Cetak / PDF
+                </a>
             </div>
         </div>
 

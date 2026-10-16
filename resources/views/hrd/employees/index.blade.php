@@ -5,17 +5,30 @@
 
     <div class="w-full space-y-6">
 
-        <!-- Header & Tombol Tambah Karyawan -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+        <!-- Header & Tombol Tambah Karyawan + Ekspor Laporan (Issue #10) -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-2">
             <div>
                 <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Data Karyawan</h2>
                 <p class="text-sm text-slate-500 mt-1">Monitoring profil, status keaktifan, riwayat pelatihan, dan masa berlaku sertifikat karyawan.</p>
             </div>
 
-            <a href="{{ route('hrd.employees.create') }}" class="inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-primary-700 transition-colors shadow-[0_4px_12px_rgba(37,99,235,0.2)]">
-                <i class="ph-bold ph-user-plus text-lg"></i>
-                Tambah Karyawan
-            </a>
+            <div class="flex flex-wrap items-center gap-2.5">
+                <a href="{{ route('hrd.export.employees', array_merge(request()->query(), ['format' => 'csv'])) }}"
+                   class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-xs hover:bg-emerald-600 hover:text-white transition-all">
+                    <i class="ph-bold ph-file-csv text-base"></i> Export Excel / CSV
+                </a>
+
+                <a href="{{ route('hrd.export.employees', array_merge(request()->query(), ['format' => 'print'])) }}"
+                   target="_blank"
+                   class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-800 text-white font-bold text-xs hover:bg-slate-700 transition-all">
+                    <i class="ph-bold ph-printer text-base"></i> Cetak / PDF
+                </a>
+
+                <a href="{{ route('hrd.employees.create') }}" class="inline-flex items-center justify-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:bg-primary-700 transition-colors shadow-[0_4px_12px_rgba(37,99,235,0.2)]">
+                    <i class="ph-bold ph-user-plus text-base"></i>
+                    Tambah Karyawan
+                </a>
+            </div>
         </div>
 
         @if(session('success'))
