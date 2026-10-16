@@ -91,8 +91,10 @@ Route::middleware(['auth', 'role:departemen'])->group(function () {
     Route::get('/department/dashboard', [DepartmentDashboardController::class, 'index'])->name('department.dashboard');
     Route::get('/departemen/dashboard', fn() => redirect()->route('department.dashboard'));
 
-    // Rute melihat & mengajukan pelatihan
+    // Rute melihat & mengajukan pelatihan (dari Katalog maupun Request Training Baru di luar Katalog)
     Route::get('/department/trainings', [DepartmentTrainingRequestController::class, 'index'])->name('department.trainings.index');
+    Route::get('/department/requests/new', [DepartmentTrainingRequestController::class, 'createNew'])->name('department.requests.createNew');
+    Route::post('/department/requests/new', [DepartmentTrainingRequestController::class, 'storeNew'])->name('department.requests.storeNew');
     Route::get('/department/trainings/{training}/request', [DepartmentTrainingRequestController::class, 'create'])->name('department.trainings.request');
     Route::post('/department/trainings/{training}/request', [DepartmentTrainingRequestController::class, 'store'])->name('department.trainings.store');
 

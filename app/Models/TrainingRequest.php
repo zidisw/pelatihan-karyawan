@@ -77,4 +77,32 @@ class TrainingRequest extends Model
     {
         return $this->hasMany(TrainingDocument::class);
     }
+
+    /**
+     * Generate nomor request otomatis dengan format REQ-YYYYMM-NNN.
+     */
+    public static function generateNomorRequest(): string
+    {
+        $prefix = 'REQ-' . date('Ym') . '-';
+        $latest = static::where('nomor_request', 'like', $prefix . '%')
+            ->orderByDesc('id')
+            ->value('nomor_request');
+
+        $nextNumber = 1;
+        if ($latest && preg_match('/(\d+)$/', $latest, $matches)) {
+            $nextNumber = ((int) $matches[1]) + 1;
+        } else {
+            $nextNumber = static::count() + 1;
+        }
+
+        do {
+            $code = $prefix . str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
+            $exists = static::where('nomor_request', $code)->exists();
+            if ($exists) {
+                $nextNumber++;
+            }
+        } while ($exists);
+
+        return $code;
+    }
 }
