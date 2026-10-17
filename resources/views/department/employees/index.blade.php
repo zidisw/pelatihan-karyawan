@@ -118,14 +118,11 @@
                                 </td>
                                 <td class="py-4 px-4">
                                     @php
-                                        $statusClass = match(strtolower($employee->status_karyawan)) {
-                                            'tetap' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                                            'kontrak' => 'bg-blue-50 text-blue-600 border-blue-100',
-                                            default => 'bg-slate-100 text-slate-600 border-slate-200',
-                                        };
+                                        $aktifVal = strtolower($employee->status_aktif ?? 'aktif');
                                     @endphp
-                                    <span class="px-2.5 py-1 rounded-md text-[10px] font-bold border uppercase {{ $statusClass }}">
-                                        {{ $employee->status_karyawan }}
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold border uppercase {{ $aktifVal === 'aktif' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100' }}">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $aktifVal === 'aktif' ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
+                                        {{ $aktifVal }}
                                     </span>
                                 </td>
                                 <td class="py-4 px-4 text-right">

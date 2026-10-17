@@ -4,11 +4,15 @@ namespace App\Http\Controllers\HRD;
 
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
+use App\Models\Certification;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Training;
 use App\Models\TrainingParticipant;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class EmployeeController extends Controller
 {
@@ -148,7 +152,8 @@ class EmployeeController extends Controller
     public function create()
     {
         $departments = Department::orderBy('nama_departemen')->get();
-        return view('hrd.employees.create', compact('departments'));
+        $existingTrainings = Training::orderBy('nama_pelatihan')->pluck('nama_pelatihan')->unique()->values();
+        return view('hrd.employees.create', compact('departments', 'existingTrainings'));
     }
 
     public function store(Request $request)
@@ -161,25 +166,162 @@ class EmployeeController extends Controller
             'level_jabatan' => 'required|in:Group Leader,Head Of Section,Head Of Department,Penanggung Jawab Operational',
             'jabatan' => 'nullable|string|max:255',
             'site_unit' => 'nullable|string|max:255',
-            'status_karyawan' => 'required|in:tetap,kontrak',
+            'status_karyawan' => 'nullable|in:tetap,kontrak',
             'status_aktif' => 'required|in:aktif,nonaktif',
             'email' => 'nullable|email|max:255',
             'nomor_hp' => 'nullable|string|max:30',
             'tanggal_join' => 'nullable|date',
+
+            // Validasi opsional untuk histori Sertifikat / Pelatihan yang sudah pernah diikuti
+            'histories' => 'nullable|array',
+            'histories.*.kategori' => 'nullable|in:Sertifikasi,Technical Skill,Soft Skill',
+            'histories.*.nama_pelatihan' => 'nullable|string|max:255',
+            'histories.*.tanggal_pelatihan' => 'nullable|date',
+            'histories.*.jenis_sertifikasi' => 'nullable|in:POP,POM,POU,K3,Lainnya',
+            'histories.*.nomor_sertifikat' => 'nullable|string|max:255',
+            'histories.*.masa_berlaku' => 'nullable|string|max:100',
+            'histories.*.is_permanent' => 'nullable|boolean',
+            'histories.*.tanggal_expired' => 'nullable|date',
+            'histories.*.penyelenggara' => 'nullable|string|max:255',
+            'histories.*.hasil_evaluasi' => 'nullable|string|max:1000',
+            'histories.*.file_sertifikat' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
-        $employee = Employee::create($validated);
+        $employeeData = collect($validated)->except('histories')->toArray();
+        // Default status_karyawan = 'tetap' karena kolom database bersifat NOT NULL
+        $employeeData['status_karyawan'] = $employeeData['status_karyawan'] ?? 'tetap';
+
+        $employee = DB::transaction(function () use ($request, $employeeData) {
+            $employee = Employee::create($employeeData);
+
+            $histories = $request->input('histories', []);
+            if (is_array($histories)) {
+                foreach ($histories as $idx => $item) {
+                    $namaPelatihan = trim((string) ($item['nama_pelatihan'] ?? ''));
+                    if ($namaPelatihan === '') {
+                        continue;
+                    }
+
+                    $kategori = $item['kategori'] ?? 'Sertifikasi';
+                    if (!in_array($kategori, ['Sertifikasi', 'Technical Skill', 'Soft Skill'], true)) {
+                        $kategori = 'Sertifikasi';
+                    }
+
+                    $tanggalPelatihan = !empty($item['tanggal_pelatihan'])
+                        ? Carbon::parse($item['tanggal_pelatihan'])->toDateString()
+                        : now()->toDateString();
+
+                    $jenisSert = !empty($item['jenis_sertifikasi']) ? $item['jenis_sertifikasi'] : 'Lainnya';
+                    $penyelenggara = trim((string) ($item['penyelenggara'] ?? '')) ?: 'Penyelenggara Internal / Eksternal';
+                    $hasilEvaluasi = trim((string) ($item['hasil_evaluasi'] ?? '')) ?: 'Riwayat pelatihan sebelummya (tercatat saat registrasi karyawan)';
+
+                    // Cari atau buat program pelatihan histori agar terhubung di Riwayat Pelatihan
+                    $training = Training::where('nama_pelatihan', $namaPelatihan)
+                        ->where('kategori', $kategori)
+                        ->first();
+
+                    if (!$training) {
+                        $kodeUnik = 'HIST-' . date('Y') . '-' . strtoupper(Str::random(4));
+                        while (Training::where('kode_program', $kodeUnik)->exists()) {
+                            $kodeUnik = 'HIST-' . date('Y') . '-' . strtoupper(Str::random(4));
+                        }
+
+                        $training = Training::create([
+                            'kode_program' => $kodeUnik,
+                            'nama_pelatihan' => $namaPelatihan,
+                            'kategori' => $kategori,
+                            'jenis_sertifikasi' => $kategori === 'Sertifikasi' && in_array($jenisSert, ['POP', 'POM', 'POU', 'K3']) ? $jenisSert : null,
+                            'deskripsi' => 'Riwayat pelatihan / sertifikasi yang telah diikuti karyawan.',
+                            'instruktur' => $penyelenggara,
+                            'tanggal_mulai' => $tanggalPelatihan,
+                            'tanggal_selesai' => $tanggalPelatihan,
+                            'kuota' => 100,
+                            'lokasi' => $employee->site_unit ?? 'Head Office',
+                            'metode_pelaksanaan' => 'OFFLINE',
+                            'status_pendaftaran' => 'ditutup',
+                            'status_program' => 'selesai',
+                        ]);
+                    }
+
+                    // Catat sebagai peserta yang telah selesai mengikuti pelatihan tersebut
+                    TrainingParticipant::updateOrCreate(
+                        [
+                            'employee_id' => $employee->id,
+                            'training_id' => $training->id,
+                        ],
+                        [
+                            'status_peserta' => 'selesai',
+                            'kehadiran' => 'hadir',
+                            'hasil_evaluasi' => $hasilEvaluasi,
+                        ]
+                    );
+
+                    // Apabila kategori adalah Sertifikasi (atau nomor sertifikat / file sertifikat diisi), simpan juga ke tabel certifications
+                    if ($kategori === 'Sertifikasi' || !empty($item['nomor_sertifikat']) || $request->hasFile("histories.{$idx}.file_sertifikat")) {
+                        $isPermanent = !empty($item['is_permanent']);
+                        $tanggalExpired = (!$isPermanent && !empty($item['tanggal_expired']))
+                            ? Carbon::parse($item['tanggal_expired'])->toDateString()
+                            : null;
+
+                        if (!$tanggalExpired && !$isPermanent) {
+                            $isPermanent = true;
+                        }
+
+                        $masaBerlaku = trim((string) ($item['masa_berlaku'] ?? ''));
+                        if ($isPermanent) {
+                            $masaBerlaku = 'Permanen';
+                        } elseif ($masaBerlaku === '' && $tanggalExpired) {
+                            $years = Carbon::parse($tanggalPelatihan)->diffInYears(Carbon::parse($tanggalExpired));
+                            $masaBerlaku = $years > 0
+                                ? $years . ' Tahun'
+                                : max(1, Carbon::parse($tanggalPelatihan)->diffInMonths(Carbon::parse($tanggalExpired))) . ' Bulan';
+                        }
+
+                        $certStatus = 'aktif';
+                        if (!$isPermanent && $tanggalExpired) {
+                            $diffDays = (int) Carbon::today()->diffInDays(Carbon::parse($tanggalExpired)->startOfDay(), false);
+                            if ($diffDays < 0) {
+                                $certStatus = 'expired';
+                            } elseif ($diffDays <= 90) {
+                                $certStatus = 'akan_expired';
+                            }
+                        }
+
+                        $filePath = null;
+                        if ($request->hasFile("histories.{$idx}.file_sertifikat")) {
+                            $filePath = $request->file("histories.{$idx}.file_sertifikat")->store('certifications', 'public');
+                        }
+
+                        Certification::create([
+                            'employee_id' => $employee->id,
+                            'training_id' => $training->id,
+                            'nama_sertifikasi' => $namaPelatihan,
+                            'jenis_sertifikasi' => $jenisSert,
+                            'nomor_sertifikat' => trim((string) ($item['nomor_sertifikat'] ?? '')) ?: null,
+                            'tanggal_terbit' => $tanggalPelatihan,
+                            'masa_berlaku' => $masaBerlaku ?: 'Permanen',
+                            'is_permanent' => $isPermanent,
+                            'tanggal_expired' => $tanggalExpired,
+                            'file_sertifikat' => $filePath,
+                            'status' => $certStatus,
+                        ]);
+                    }
+                }
+            }
+
+            return $employee;
+        });
 
         AuditLog::record(
             'Employee',
             $employee->id,
             'CREATE',
             null,
-            $employee->toArray(),
-            "Menambahkan data karyawan baru: {$employee->nama} ({$employee->nik})"
+            $employee->load(['certifications', 'trainingParticipants'])->toArray(),
+            "Menambahkan data karyawan baru beserta histori pelatihan/sertifikat: {$employee->nama} ({$employee->nik})"
         );
 
-        return redirect()->route('hrd.employees.index')->with('success', 'Data karyawan berhasil ditambahkan!');
+        return redirect()->route('hrd.employees.index')->with('success', 'Data karyawan beserta riwayat pelatihan/sertifikat berhasil ditambahkan!');
     }
 
     public function edit(Employee $employee)
@@ -198,12 +340,14 @@ class EmployeeController extends Controller
             'level_jabatan' => 'required|in:Group Leader,Head Of Section,Head Of Department,Penanggung Jawab Operational',
             'jabatan' => 'nullable|string|max:255',
             'site_unit' => 'nullable|string|max:255',
-            'status_karyawan' => 'required|in:tetap,kontrak',
+            'status_karyawan' => 'nullable|in:tetap,kontrak',
             'status_aktif' => 'required|in:aktif,nonaktif',
             'email' => 'nullable|email|max:255',
             'nomor_hp' => 'nullable|string|max:30',
             'tanggal_join' => 'nullable|date',
         ]);
+
+        $validated['status_karyawan'] = $validated['status_karyawan'] ?? $employee->status_karyawan ?? 'tetap';
 
         $oldData = $employee->toArray();
         $employee->update($validated);

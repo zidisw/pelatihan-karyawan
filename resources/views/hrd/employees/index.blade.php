@@ -214,7 +214,7 @@
                             <th class="py-3.5 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">DEPARTEMEN & SITE</th>
                             <th class="py-3.5 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">LEVEL & JOB TITLE</th>
                             <th class="py-3.5 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">STATUS PELATIHAN & SERTIFIKAT</th>
-                            <th class="py-3.5 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">STATUS KERJA</th>
+                            <th class="py-3.5 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">STATUS KEAKTIFAN</th>
                             <th class="py-3.5 px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest text-right">AKSI</th>
                         </tr>
                     </thead>
@@ -325,25 +325,15 @@
                                     </div>
                                 </td>
 
-                                <!-- Kolom 5: Status Kontrak & Status Keaktifan -->
+                                <!-- Kolom 5: Status Keaktifan -->
                                 <td class="py-4 px-4">
                                     @php
-                                        $statusClass = match(strtolower($employee->status_karyawan ?? '')) {
-                                            'tetap' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
-                                            'kontrak' => 'bg-blue-50 text-blue-600 border-blue-200',
-                                            default => 'bg-slate-100 text-slate-600 border-slate-200',
-                                        };
                                         $aktifVal = strtolower($employee->status_aktif ?? 'aktif');
                                     @endphp
-                                    <div class="flex flex-col items-start gap-1">
-                                        <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold border uppercase {{ $statusClass }}">
-                                            {{ $employee->status_karyawan ?? '-' }}
-                                        </span>
-                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold {{ $aktifVal === 'aktif' ? 'text-emerald-600' : 'text-rose-600' }}">
-                                            <span class="w-1.5 h-1.5 rounded-full {{ $aktifVal === 'aktif' ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
-                                            {{ ucfirst($aktifVal) }}
-                                        </span>
-                                    </div>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold border {{ $aktifVal === 'aktif' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}">
+                                        <span class="w-1.5 h-1.5 rounded-full {{ $aktifVal === 'aktif' ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
+                                        {{ ucfirst($aktifVal) }}
+                                    </span>
                                 </td>
 
                                 <!-- Kolom 6: Aksi Sejajar 1 Baris -->

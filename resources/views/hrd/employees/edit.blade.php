@@ -212,22 +212,6 @@
                             @enderror
                         </div>
                         <div>
-                            <label class="form-label">Status Kontrak Karyawan</label>
-                            <div class="relative group">
-                                <select name="status_karyawan" class="form-input appearance-none cursor-pointer" required>
-                                    <option value="" disabled {{ old('status_karyawan', $employee->status_karyawan) == '' ? 'selected' : '' }}>Pilih status kontrak</option>
-                                    <option value="tetap" {{ old('status_karyawan', $employee->status_karyawan) == 'tetap' ? 'selected' : '' }}>Karyawan Tetap</option>
-                                    <option value="kontrak" {{ old('status_karyawan', $employee->status_karyawan) == 'kontrak' ? 'selected' : '' }}>Karyawan Kontrak</option>
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center px-2 text-slate-400 group-hover:text-slate-600 transition duration-200">
-                                    <i class="ph-bold ph-caret-down"></i>
-                                </div>
-                            </div>
-                            @error('status_karyawan')
-                                <span class="text-red-500 text-xs font-bold mt-1 block">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div>
                             <label class="form-label">Status Keaktifan</label>
                             <div class="relative group">
                                 <select name="status_aktif" class="form-input appearance-none cursor-pointer" required>

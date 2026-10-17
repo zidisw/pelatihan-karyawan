@@ -55,9 +55,6 @@
                             <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold {{ $isAktif ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200' }}">
                                 {{ strtoupper($employee->status_aktif ?? 'AKTIF') }}
                             </span>
-                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold {{ $employee->status_karyawan === 'tetap' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-amber-50 text-amber-700 border border-amber-200' }}">
-                                KARYAWAN {{ strtoupper($employee->status_karyawan ?? 'TETAP') }}
-                            </span>
                         </div>
                         <p class="text-xs font-semibold text-slate-500 mt-1">
                             NIK: <strong class="text-slate-700">{{ $employee->nik }}</strong>
@@ -195,15 +192,10 @@
                         <span class="font-bold text-slate-800">{{ $employee->site_unit ?? 'Head Office' }}</span>
                     </div>
                     <div class="flex items-center justify-between py-2.5 border-b border-slate-50">
-                        <span class="text-slate-400 font-semibold">Status Kontrak & Keaktifan</span>
-                        <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded-md font-bold uppercase {{ $employee->status_karyawan === 'tetap' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700' }}">
-                                {{ $employee->status_karyawan ?? '-' }}
-                            </span>
-                            <span class="px-2.5 py-0.5 rounded-md font-bold uppercase {{ $isAktif ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
-                                {{ $employee->status_aktif ?? 'aktif' }}
-                            </span>
-                        </div>
+                        <span class="text-slate-400 font-semibold">Status Keaktifan</span>
+                        <span class="px-2.5 py-0.5 rounded-md font-bold uppercase {{ $isAktif ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
+                            {{ $employee->status_aktif ?? 'aktif' }}
+                        </span>
                     </div>
                     <div class="flex items-center justify-between py-2.5">
                         <span class="text-slate-400 font-semibold">Tanggal Bergabung & Masa Kerja</span>
