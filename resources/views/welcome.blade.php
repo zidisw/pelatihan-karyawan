@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Raja Academy - Training Management System</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/Racademy.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
@@ -48,15 +49,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-primary-500/20">
-                        <i class="ph-fill ph-graduation-cap text-2xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-extrabold text-slate-800 text-xl leading-none tracking-tight">Raja Academy</h1>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Portal Internal</p>
-                    </div>
-                </div>
+                <a href="{{ url('/') }}" class="flex items-center gap-2">
+                    <img src="{{ asset('images/Racademy.png') }}" alt="Racademy" class="h-10 w-auto object-contain">
+                </a>
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center gap-8">
@@ -268,11 +263,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white">
-                            <i class="ph-fill ph-graduation-cap text-xl"></i>
+                    <div class="flex items-center mb-6">
+                        <div class="bg-white px-3.5 py-2 rounded-xl shadow-sm inline-flex items-center">
+                            <img src="{{ asset('images/Racademy.png') }}" alt="Racademy" class="h-7 w-auto object-contain">
                         </div>
-                        <h1 class="font-bold text-white text-lg tracking-tight">Raja Academy</h1>
                     </div>
                     <p class="text-slate-400 text-sm leading-relaxed font-medium mb-6">Fasilitas portal pengembangan kompetensi yang dikelola oleh Departemen HR L&D Raja Academy.</p>
                 </div>

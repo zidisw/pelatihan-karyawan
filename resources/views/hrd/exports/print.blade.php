@@ -68,9 +68,12 @@
 </head>
 <body>
     <div class="header">
-        <div>
-            <h1>{{ $title }}</h1>
-            <p>PT Roda Jaya Sakti (Raja Academy) &bull; {{ $subtitle }} &bull; Total Data: <strong>{{ count($rows) }} Baris</strong></p>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="{{ asset('images/Racademy.png') }}" alt="Racademy" style="height: 38px; width: auto; object-fit: contain;">
+            <div>
+                <h1>{{ $title }}</h1>
+                <p>PT Roda Jaya Sakti (Raja Academy) &bull; {{ $subtitle }} &bull; Total Data: <strong>{{ count($rows) }} Baris</strong></p>
+            </div>
         </div>
         <div class="no-print">
             <button type="button" class="btn-print" onclick="window.print()">Cetak / Simpan sebagai PDF</button>

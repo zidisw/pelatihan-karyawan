@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Raja Academy Portal L&D</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/Racademy.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
@@ -72,14 +73,8 @@
         <!-- Logo & Header -->
         <div class="relative z-10">
             <a href="{{ url('/') }}"
-                class="inline-flex items-center gap-3 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/20 hover:bg-white/20 transition-all">
-                <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-primary-600 shadow-sm">
-                    <i class="ph-fill ph-graduation-cap text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="font-extrabold text-white text-lg leading-none tracking-tight">Raja Academy</h1>
-                    <p class="text-[9px] font-bold text-primary-100 uppercase tracking-widest mt-0.5">Portal Internal</p>
-                </div>
+                class="inline-flex items-center bg-white px-4 py-2 rounded-2xl shadow-lg hover:shadow-xl hover:bg-slate-50 transition-all">
+                <img src="{{ asset('images/Racademy.png') }}" alt="Racademy" class="h-8 w-auto object-contain">
             </a>
         </div>
 
@@ -134,15 +129,10 @@
         <div class="w-full max-w-md px-6 py-12 sm:px-10 flex flex-col justify-center min-h-screen lg:min-h-0">
 
             <!-- Mobile Logo -->
-            <div class="flex items-center gap-3 mb-10 lg:hidden">
-                <div
-                    class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-primary-500/20">
-                    <i class="ph-fill ph-graduation-cap text-2xl"></i>
-                </div>
-                <div>
-                    <h1 class="font-extrabold text-slate-800 text-xl leading-none tracking-tight">Raja Academy</h1>
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Portal Internal</p>
-                </div>
+            <div class="flex items-center mb-10 lg:hidden">
+                <a href="{{ url('/') }}" class="inline-flex items-center">
+                    <img src="{{ asset('images/Racademy.png') }}" alt="Racademy" class="h-10 w-auto object-contain">
+                </a>
             </div>
 
             <!-- Form Header -->

@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Raja Academy - Admin Panel</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/Racademy.png') }}">
 
     <!-- Google Fonts & Phosphor Icons (Optimized) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,15 +56,9 @@
 
         <!-- Logo -->
         <div class="h-20 flex items-center px-6 border-b border-slate-50 bg-white">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shrink-0 text-white shadow-md shadow-primary-500/20">
-                    <i class="ph-fill ph-graduation-cap text-2xl"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-slate-800 text-base leading-tight tracking-tight">Raja Academy</h1>
-                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Admin Panel</p>
-                </div>
-            </div>
+            <a href="{{ route('dashboard') }}" class="flex items-center">
+                <img src="{{ asset('images/Racademy.png') }}" alt="Racademy" class="h-10 w-auto object-contain">
+            </a>
         </div>
 
         <!-- Navigation Links Dinamis Berdasarkan Role -->
