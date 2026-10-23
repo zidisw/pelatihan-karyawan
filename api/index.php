@@ -2,6 +2,10 @@
 
 // Pastikan folder penyimpanan sementara di /tmp tersedia untuk runtime serverless Vercel
 $storageDirs = [
+    '/tmp/storage/app/private',
+    '/tmp/storage/app/public/certificates',
+    '/tmp/storage/app/public/certifications',
+    '/tmp/storage/app/public/training-documents',
     '/tmp/storage/framework/views',
     '/tmp/storage/framework/cache/data',
     '/tmp/storage/framework/sessions',

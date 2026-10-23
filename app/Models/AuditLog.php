@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 #[Fillable([
     'user_id',
@@ -43,16 +44,21 @@ class AuditLog extends Model
         ?array $perubahanLama = null,
         ?array $perubahanBaru = null,
         ?string $catatan = null
-    ): self {
-        return self::create([
-            'user_id' => auth()->id(),
-            'entitas' => $entitas,
-            'entitas_id' => $entitasId,
-            'tindakan' => $tindakan,
-            'perubahan_lama' => $perubahanLama,
-            'perubahan_baru' => $perubahanBaru,
-            'catatan' => $catatan,
-            'ip_address' => request()?->ip(),
-        ]);
+    ): ?self {
+        try {
+            return self::create([
+                'user_id' => auth()->id(),
+                'entitas' => $entitas,
+                'entitas_id' => $entitasId,
+                'tindakan' => $tindakan,
+                'perubahan_lama' => $perubahanLama,
+                'perubahan_baru' => $perubahanBaru,
+                'catatan' => $catatan,
+                'ip_address' => request()?->ip(),
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning('AuditLog::record failed: ' . $e->getMessage());
+            return null;
+        }
     }
 }

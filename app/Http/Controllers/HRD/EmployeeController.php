@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Training;
 use App\Models\TrainingParticipant;
+use App\Support\SafeFileStorage;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -271,25 +272,16 @@ class EmployeeController extends Controller
                         if ($isPermanent) {
                             $masaBerlaku = 'Permanen';
                         } elseif ($masaBerlaku === '' && $tanggalExpired) {
-                            $years = Carbon::parse($tanggalPelatihan)->diffInYears(Carbon::parse($tanggalExpired));
+                            $years = (int) Carbon::parse($tanggalPelatihan)->diffInYears(Carbon::parse($tanggalExpired));
+                            $months = max(1, (int) round(Carbon::parse($tanggalPelatihan)->diffInMonths(Carbon::parse($tanggalExpired))));
                             $masaBerlaku = $years > 0
                                 ? $years . ' Tahun'
-                                : max(1, Carbon::parse($tanggalPelatihan)->diffInMonths(Carbon::parse($tanggalExpired))) . ' Bulan';
-                        }
-
-                        $certStatus = 'aktif';
-                        if (!$isPermanent && $tanggalExpired) {
-                            $diffDays = (int) Carbon::today()->diffInDays(Carbon::parse($tanggalExpired)->startOfDay(), false);
-                            if ($diffDays < 0) {
-                                $certStatus = 'expired';
-                            } elseif ($diffDays <= 90) {
-                                $certStatus = 'akan_expired';
-                            }
+                                : $months . ' Bulan';
                         }
 
                         $filePath = null;
-                        if ($request->hasFile("histories.{$idx}.file_sertifikat")) {
-                            $filePath = $request->file("histories.{$idx}.file_sertifikat")->store('certifications', 'public');
+                        if ($request->hasFile("histories.{$idx}.file_sertifikat") && $request->file("histories.{$idx}.file_sertifikat")->isValid()) {
+                            $filePath = SafeFileStorage::store($request->file("histories.{$idx}.file_sertifikat"), 'certificates');
                         }
 
                         Certification::create([
@@ -303,7 +295,6 @@ class EmployeeController extends Controller
                             'is_permanent' => $isPermanent,
                             'tanggal_expired' => $tanggalExpired,
                             'file_sertifikat' => $filePath,
-                            'status' => $certStatus,
                         ]);
                     }
                 }

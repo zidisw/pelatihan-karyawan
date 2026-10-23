@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\Training;
 use App\Models\TrainingDocument;
+use App\Support\SafeFileStorage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class TrainingController extends Controller
 {
@@ -254,8 +254,8 @@ class TrainingController extends Controller
      */
     public function destroyDocument(TrainingDocument $document)
     {
-        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
-            Storage::disk('public')->delete($document->file_path);
+        if ($document->file_path) {
+            SafeFileStorage::delete($document->file_path);
         }
 
         $document->delete();
@@ -283,8 +283,8 @@ class TrainingController extends Controller
 
         // Hapus file dokumen pendukung jika belum ada transaksi peserta/pengajuan
         foreach ($training->documents as $doc) {
-            if ($doc->file_path && Storage::disk('public')->exists($doc->file_path)) {
-                Storage::disk('public')->delete($doc->file_path);
+            if ($doc->file_path) {
+                SafeFileStorage::delete($doc->file_path);
             }
             $doc->delete();
         }
@@ -308,11 +308,11 @@ class TrainingController extends Controller
                 continue;
             }
 
-            $storedPath = $file->store('training-documents', 'public');
+            $storedPath = SafeFileStorage::store($file, 'training-documents');
 
             TrainingDocument::create([
                 'training_id' => $training->id,
-                'jenis_dokumen' => 'silabus_brosur_tor',
+                'jenis_dokumen' => 'silabus',
                 'nama_file' => $file->getClientOriginalName(),
                 'file_path' => $storedPath,
                 'mime_type' => $file->getClientMimeType(),

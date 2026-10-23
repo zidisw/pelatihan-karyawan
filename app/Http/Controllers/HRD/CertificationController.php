@@ -5,9 +5,9 @@ namespace App\Http\Controllers\HRD;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Certification;
+use App\Support\SafeFileStorage;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class CertificationController extends Controller
 {
@@ -16,7 +16,7 @@ class CertificationController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'employee_id' => 'required|exists:employees,id',
             'training_id' => 'nullable|exists:trainings,id',
             'nama_sertifikasi' => 'required|string|max:255',
@@ -24,10 +24,16 @@ class CertificationController extends Controller
             'nomor_sertifikat' => 'nullable|string|max:150',
             'tanggal_terbit' => 'nullable|date',
             'masa_berlaku' => 'nullable|string|max:100',
-            'tanggal_expired' => 'nullable|date|after_or_equal:tanggal_terbit',
+            'tanggal_expired' => 'nullable|date',
             'is_permanent' => 'nullable|boolean',
             'file_sertifikat' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-        ]);
+        ];
+
+        if ($request->filled('tanggal_terbit') && $request->filled('tanggal_expired')) {
+            $rules['tanggal_expired'] = 'nullable|date|after_or_equal:tanggal_terbit';
+        }
+
+        $validated = $request->validate($rules);
 
         $isPermanent = $request->boolean('is_permanent');
         $validated['is_permanent'] = $isPermanent;
@@ -37,15 +43,14 @@ class CertificationController extends Controller
             $validated['masa_berlaku'] = 'Permanen';
         } elseif (empty($validated['masa_berlaku']) && !empty($validated['tanggal_terbit']) && !empty($validated['tanggal_expired'])) {
             $years = (int) Carbon::parse($validated['tanggal_terbit'])->diffInYears(Carbon::parse($validated['tanggal_expired']));
-            $validated['masa_berlaku'] = $years > 0
-                ? $years . ' Tahun'
-                : Carbon::parse($validated['tanggal_terbit'])->diffInMonths(Carbon::parse($validated['tanggal_expired'])) . ' Bulan';
+            $months = max(1, (int) round(Carbon::parse($validated['tanggal_terbit'])->diffInMonths(Carbon::parse($validated['tanggal_expired']))));
+            $validated['masa_berlaku'] = $years > 0 ? $years . ' Tahun' : $months . ' Bulan';
         }
 
         unset($validated['file_sertifikat']);
 
         if ($request->hasFile('file_sertifikat') && $request->file('file_sertifikat')->isValid()) {
-            $validated['file_sertifikat'] = $request->file('file_sertifikat')->store('certificates', 'public');
+            $validated['file_sertifikat'] = SafeFileStorage::store($request->file('file_sertifikat'), 'certificates');
         }
 
         $certification = Certification::create($validated);
@@ -67,17 +72,23 @@ class CertificationController extends Controller
      */
     public function update(Request $request, Certification $certification)
     {
-        $validated = $request->validate([
+        $rules = [
             'training_id' => 'nullable|exists:trainings,id',
             'nama_sertifikasi' => 'required|string|max:255',
             'jenis_sertifikasi' => 'required|string|max:100',
             'nomor_sertifikat' => 'nullable|string|max:150',
             'tanggal_terbit' => 'nullable|date',
             'masa_berlaku' => 'nullable|string|max:100',
-            'tanggal_expired' => 'nullable|date|after_or_equal:tanggal_terbit',
+            'tanggal_expired' => 'nullable|date',
             'is_permanent' => 'nullable|boolean',
             'file_sertifikat' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-        ]);
+        ];
+
+        if ($request->filled('tanggal_terbit') && $request->filled('tanggal_expired')) {
+            $rules['tanggal_expired'] = 'nullable|date|after_or_equal:tanggal_terbit';
+        }
+
+        $validated = $request->validate($rules);
 
         $oldData = $certification->toArray();
 
@@ -89,18 +100,17 @@ class CertificationController extends Controller
             $validated['masa_berlaku'] = 'Permanen';
         } elseif (empty($validated['masa_berlaku']) && !empty($validated['tanggal_terbit']) && !empty($validated['tanggal_expired'])) {
             $years = (int) Carbon::parse($validated['tanggal_terbit'])->diffInYears(Carbon::parse($validated['tanggal_expired']));
-            $validated['masa_berlaku'] = $years > 0
-                ? $years . ' Tahun'
-                : Carbon::parse($validated['tanggal_terbit'])->diffInMonths(Carbon::parse($validated['tanggal_expired'])) . ' Bulan';
+            $months = max(1, (int) round(Carbon::parse($validated['tanggal_terbit'])->diffInMonths(Carbon::parse($validated['tanggal_expired']))));
+            $validated['masa_berlaku'] = $years > 0 ? $years . ' Tahun' : $months . ' Bulan';
         }
 
         unset($validated['file_sertifikat']);
 
         if ($request->hasFile('file_sertifikat') && $request->file('file_sertifikat')->isValid()) {
-            if ($certification->file_sertifikat && Storage::disk('public')->exists($certification->file_sertifikat)) {
-                Storage::disk('public')->delete($certification->file_sertifikat);
+            if ($certification->file_sertifikat) {
+                SafeFileStorage::delete($certification->file_sertifikat);
             }
-            $validated['file_sertifikat'] = $request->file('file_sertifikat')->store('certificates', 'public');
+            $validated['file_sertifikat'] = SafeFileStorage::store($request->file('file_sertifikat'), 'certificates');
         }
 
         $certification->update($validated);
@@ -125,8 +135,8 @@ class CertificationController extends Controller
         $oldData = $certification->toArray();
         $nama = $certification->nama_sertifikasi;
 
-        if ($certification->file_sertifikat && Storage::disk('public')->exists($certification->file_sertifikat)) {
-            Storage::disk('public')->delete($certification->file_sertifikat);
+        if ($certification->file_sertifikat) {
+            SafeFileStorage::delete($certification->file_sertifikat);
         }
 
         AuditLog::record(
@@ -162,20 +172,24 @@ class CertificationController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
-        if ($certification->file_sertifikat && Storage::disk('public')->exists($certification->file_sertifikat)) {
+        if ($certification->file_sertifikat) {
             $extension = pathinfo($certification->file_sertifikat, PATHINFO_EXTENSION);
             $safeName = 'Sertifikat_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $certification->employee?->nik ?? 'EMP')
                 . '_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $certification->nama_sertifikasi)
                 . ($extension ? ".{$extension}" : '');
 
-            if ($request->boolean('inline')) {
-                return Storage::disk('public')->response($certification->file_sertifikat, $safeName);
-            }
+            $fileResponse = SafeFileStorage::response(
+                $certification->file_sertifikat,
+                $safeName,
+                $request->boolean('inline')
+            );
 
-            return Storage::disk('public')->download($certification->file_sertifikat, $safeName);
+            if ($fileResponse !== null) {
+                return $fileResponse;
+            }
         }
 
-        // Fallback ringkasan sertifikat siap cetak apabila file fisik dari data seeder belum tersedia di disk
+        // Fallback ringkasan sertifikat siap cetak apabila file fisik dari data seeder belum tersedia
         return response()->view('hrd.exports.certificate_preview', [
             'certification' => $certification,
         ]);
